@@ -1,413 +1,109 @@
-/* ESTILOS GENERALES Y MODALES */
-body {
-    font-family: 'Fredoka', sans-serif;
-    background-color: #e0f7fa;
-    color: #004d40;
-    margin: 0;
-    box-sizing: border-box;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("¡Aventura de Bucky iniciada! La página se ha cargado.");
 
-#modal-manager {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-}
+    // --- GESTIÓN GLOBAL ---
+    let playerName = '';
+    const synth = window.speechSynthesis;
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    const gameContainer = document.getElementById('game-container');
+    const modalManager = document.getElementById('modal-manager');
+    let game1Initialized = false, game2Initialized = false, game3Initialized = false;
 
-.modal-window {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 77, 64, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    opacity: 1;
-    transition: opacity 0.5s, visibility 0.5s;
-}
+    // --- GESTIÓN DE MODALES Y NARRATIVA ---
+    const modals = {
+        'welcome': document.getElementById('welcome-modal'), 'story-1': document.getElementById('story-1-modal'),
+        'story-2': document.getElementById('story-2-modal'), 'story-3': document.getElementById('story-3-modal'),
+    };
+    const games = {
+        'game-1': document.getElementById('game-1-backpack'), 'game-2': document.getElementById('game-2-find'),
+        'game-3': document.getElementById('game-3-commands'),
+    };
 
-.modal-window.hidden {
-    opacity: 0;
-    visibility: hidden;
-    display: none;
-}
-
-.modal-content {
-    background: white;
-    padding: 30px 40px;
-    border-radius: 25px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 5px solid #ffab91;
-    width: 90%;
-    max-width: 450px;
-}
-
-.modal-content h2 {
-    color: #ff6f61;
-    font-size: 2.8em;
-    margin: 0 0 10px 0;
-}
-
-.modal-content p,
-.story-text p {
-    font-size: 1.3em;
-    color: #546e7a;
-    margin-bottom: 20px;
-    line-height: 1.6;
-}
-
-#player-name-input {
-    width: 100%;
-    padding: 15px;
-    font-family: 'Fredoka', sans-serif;
-    font-size: 1.2em;
-    border: 2px solid #bcaaa4;
-    border-radius: 12px;
-    box-sizing: border-box;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-#player-name-input:focus {
-    outline: none;
-    border-color: #ff6f61;
-}
-
-.modal-button {
-    font-family: 'Fredoka', sans-serif;
-    font-size: 1.6em;
-    font-weight: 500;
-    padding: 15px 40px;
-    border: none;
-    background-color: #66bb6a;
-    color: white;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: transform 0.2s, background-color 0.2s;
-}
-
-.modal-button:hover {
-    background-color: #57a05a;
-    transform: scale(1.05);
-}
-
-/* CONTENEDOR PRINCIPAL DEL JUEGO */
-#game-container {
-    width: 100%;
-    max-width: 900px;
-    background-color: #ffffff;
-    border-radius: 25px;
-    padding: 20px 30px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    border: 5px solid #ffcc80;
-    margin: 20px auto;
-    box-sizing: border-box;
-}
-
-.game-section {
-    padding: 10px;
-}
-
-.game-section.hidden {
-    display: none;
-}
-
-.game-area {
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 15px;
-}
-
-header h1 {
-    font-size: 2.5em;
-    color: #ff6f61;
-    margin-bottom: 10px;
-}
-
-header p {
-    font-size: 1.2em;
-    color: #546e7a;
-}
-
-.progress-tracker {
-    font-size: 1.3em;
-    font-weight: 500;
-    margin-top: 15px;
-    color: #00796b;
-    background-color: #e8f5e9;
-    padding: 8px 15px;
-    border-radius: 20px;
-    display: inline-block;
-}
-
-/* ESTILOS JUEGO 1 (Pack Backpack) */
-#game-1-backpack .game-area {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #f1f8e9;
-}
-
-#objects-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    min-height: 150px;
-    flex: 1;
-    padding: 10px;
-}
-
-.object {
-    font-size: 4em;
-    margin: 15px;
-    cursor: grab;
-    transition: transform 0.2s;
-    position: relative;
-}
-
-.object:hover {
-    transform: scale(1.2) rotate(5deg);
-}
-
-.object.dragging {
-    opacity: 0.5;
-}
-
-.tooltip {
-    visibility: hidden;
-    background-color: #37474f;
-    color: #fff;
-    text-align: center;
-    border-radius: 8px;
-    padding: 8px 12px;
-    position: absolute;
-    z-index: 10;
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.5em;
-    font-weight: 500;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 2px solid #ffffff;
-}
-
-.object:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-}
-
-#backpack {
-    position: relative;
-    width: 150px;
-    height: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s;
-}
-
-#backpack svg {
-    width: 100%;
-    height: 100%;
-    color: #ff8a65;
-    transition: transform 0.3s;
-}
-
-#backpack.drag-over svg {
-    transform: scale(1.15);
-    color: #66bb6a;
-}
-
-#packed-items-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    width: 70%;
-    height: 60%;
-}
-
-.packed-item {
-    font-size: 2.2em;
-    margin: 2px;
-}
-
-/* ESTILOS JUEGO 2 (Find Object) */
-.command-bar {
-    font-size: 1.8em;
-    font-weight: 600;
-    color: #d84315;
-    margin: 20px 0;
-    padding: 10px;
-    background-color: #fff9c4;
-    border-radius: 15px;
-    border: 3px dashed #ffb74d;
-}
-
-#game-2-find .game-area {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    background-color: transparent;
-}
-
-#find-scene {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 400px;
-    background: url('https://i.pinimg.com/originals/a3/57/3e/a3573e6a0815340a653428fa6930a662.jpg') no-repeat center center;
-    background-size: cover;
-    border-radius: 15px;
-    overflow: hidden;
-    border: 5px solid #a5d6a7;
-}
-
-.findable-object {
-    position: absolute;
-    font-size: 3em;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.findable-object:hover {
-    transform: scale(1.2);
-}
-
-.found {
-    animation: found-animation 0.5s ease-out;
-}
-
-@keyframes found-animation {
-    0% {
-        transform: scale(1.2);
+    modalManager.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-button')) {
+            console.log("Botón de modal presionado. Avanzando...");
+            const next = e.target.dataset.next;
+            handleFlow(next);
+        }
+    });
+    
+    function handleFlow(step) {
+        console.log(`Manejando flujo al paso: ${step}`);
+        Object.values(modals).forEach(m => m.classList.add('hidden'));
+        Object.values(games).forEach(g => g.classList.add('hidden'));
+        
+        if (modals[step]) {
+            if(step === 'story-1') setupStory1(); if(step === 'story-2') setupStory2(); if(step === 'story-3') setupStory3();
+            modals[step].classList.remove('hidden');
+        } else if (games[step]) {
+            modalManager.classList.add('hidden'); gameContainer.classList.remove('hidden'); games[step].classList.remove('hidden');
+            if (step === 'game-1' && !game1Initialized) initGame1();
+            if (step === 'game-2' && !game2Initialized) initGame2();
+            if (step === 'game-3' && !game3Initialized) initGame3();
+        }
     }
-    50% {
-        transform: scale(1.5) rotate(15deg);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
 
-/* ESTILOS JUEGO 3 (Listen and Do) */
-#game-3-commands .game-area {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #f1f8e9;
-}
+    function setupStory1() { playerName = document.getElementById('player-name-input').value.trim() || 'Superstar'; document.querySelectorAll('.player-name').forEach(span => span.textContent = playerName); modals['story-1'].querySelector('.story-text').innerHTML = `<p>¡Hola, <strong>${playerName}</strong>! Soy Bucky, tu nueva mochila. ¿Me ayudas a guardar a mis amigos?</p>`; console.log("Historia 1 configurada.");}
+    function setupStory2() { modals['story-2'].querySelector('.story-text').innerHTML = `<p>¡Buen trabajo, <strong>${playerName}</strong>! ¡Ahora vamos a jugar a las escondidas!</p>`; console.log("Historia 2 configurada.");}
+    function setupStory3() { modals['story-3'].querySelector('.story-text').innerHTML = `<p>¡Eres un gran explorador, <strong>${playerName}</strong>! Última misión: ¡las palabras mágicas!</p>`; console.log("Historia 3 configurada.");}
 
-#command-scene {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-wrap: wrap;
-}
+    // --- UTILIDADES ---
+    function playSound(type) { /*...*/ }
+    function speak(text) { /*...*/ }
 
-.command-object {
-    font-size: 8em;
-    cursor: pointer;
-    transition: transform 0.3s;
-    margin: 20px;
-}
+    // --- JUEGO 1: PACK YOUR BACKPACK ---
+    const objects = document.querySelectorAll('.object');
+    const backpack = document.getElementById('backpack');
+    let draggedObject = null;
+    
+    function initGame1() {
+        console.log("Inicializando Juego 1: Arrastrar a la mochila.");
+        game1Initialized = true;
+        
+        objects.forEach(object => {
+            console.log(`Añadiendo listeners al objeto: ${object.id}`);
+            object.addEventListener('dragstart', (e) => { 
+                console.log(`--- DRAGSTART: Empezando a arrastrar ${e.currentTarget.id}`);
+                e.dataTransfer.setData('text/plain', e.currentTarget.id);
+                e.dataTransfer.effectAllowed = 'move';
+                draggedObject = e.currentTarget;
+                setTimeout(() => e.currentTarget.classList.add('dragging'), 0); 
+            });
+            object.addEventListener('dragend', (e) => { 
+                console.log(`--- DRAGEND: Se terminó de arrastrar ${e.currentTarget.id}`);
+                e.currentTarget.classList.remove('dragging');
+            });
+        });
 
-.command-object:hover {
-    transform: scale(1.1);
-}
+        backpack.addEventListener('dragenter', (e) => { 
+            e.preventDefault(); 
+            console.log("--- DRAGENTER: Objeto entrando en la mochila.");
+            backpack.classList.add('drag-over'); 
+        });
+        backpack.addEventListener('dragover', (e) => { 
+            e.preventDefault();
+            // console.log("--- DRAGOVER: Objeto sobre la mochila."); // Se comenta para no llenar la consola
+        });
+        backpack.addEventListener('dragleave', () => { 
+            console.log("--- DRAGLEAVE: Objeto saliendo de la mochila.");
+            backpack.classList.remove('drag-over'); 
+        });
+        backpack.addEventListener('drop', (e) => {
+            e.preventDefault();
+            console.log("--- DROP: ¡Objeto soltado en la mochila!");
+            backpack.classList.remove('drag-over');
+            if (draggedObject && !draggedObject.classList.contains('packed')) {
+                console.log(`Acción de drop válida para: ${draggedObject.id}`);
+                draggedObject.classList.add('hidden', 'packed');
+                // ... resto de la lógica de éxito
+                handleFlow('story-2');
+            } else {
+                console.log("Acción de drop inválida.");
+            }
+        });
+    }
 
-.command-object.animated {
-    animation: action-animation 1s ease-in-out;
-}
-
-@keyframes action-animation {
-    0% {
-        transform: translateY(0) rotate(0);
-    }
-    50% {
-        transform: translateY(-20px) rotate(10deg);
-    }
-    100% {
-        transform: translateY(0) rotate(0);
-    }
-}
-
-/* MENSAJE FINAL Y BOTÓN DE REINICIO */
-#final-success-message {
-    text-align: center;
-    padding: 20px;
-}
-
-#final-success-message h2 {
-    color: #66bb6a;
-    font-size: 3em;
-}
-
-#final-success-message p {
-    font-size: 1.5em;
-}
-
-#reset-button {
-    font-family: 'Fredoka', sans-serif;
-    font-size: 1.5em;
-    padding: 15px 30px;
-    border: none;
-    background-color: #ff6f61;
-    color: white;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-#reset-button:hover {
-    background-color: #e55a50;
-}
-
-/* DISEÑO RESPONSIVO PARA MÓVILES */
-@media (max-width: 600px) {
-    .modal-content h2 {
-        font-size: 2em;
-    }
-    .modal-content p {
-        font-size: 1.1em;
-    }
-    #game-container {
-        padding: 15px;
-    }
-    #game-1-backpack .game-area,
-    #game-3-commands .game-area {
-        flex-direction: column;
-    }
-    .object {
-        font-size: 3em;
-    }
-    #backpack {
-        width: 120px;
-        height: 120px;
-    }
-    #find-scene {
-        height: 300px;
-    }
-    .findable-object {
-        font-size: 2.5em;
-    }
-    .command-object {
-        font-size: 6em;
-    }
-}
+    // El resto de la lógica de los juegos 2 y 3 no se incluye aquí para enfocarnos en el problema principal.
+    // ...
+});
