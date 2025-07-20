@@ -73,12 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
         game1Initialized = true;
         objects.forEach(object => {
             object.addEventListener('dragstart', (e) => { 
-                // ***** CAMBIO IMPORTANTE AQUÍ *****
-                // Esta línea es esencial para la compatibilidad con todos los navegadores
                 e.dataTransfer.setData('text/plain', e.currentTarget.id);
                 e.dataTransfer.effectAllowed = 'move';
-
-                draggedObject = e.currentTarget; // Usamos currentTarget para más robustez
+                draggedObject = e.currentTarget;
                 playSound('pickup'); 
                 setTimeout(() => {
                     e.currentTarget.classList.add('dragging');
@@ -91,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         backpack.addEventListener('dragenter', (e) => { e.preventDefault(); backpack.classList.add('drag-over'); });
         backpack.addEventListener('dragover', (e) => { 
-            e.preventDefault(); // Permitir que se suelte el objeto
+            e.preventDefault();
         });
         backpack.addEventListener('dragleave', () => { backpack.classList.remove('drag-over'); });
         backpack.addEventListener('drop', (e) => {
