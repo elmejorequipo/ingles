@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aventura de Bucky - Paso 1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Fredoka', sans-serif; background-color: #e0f7fa; color: #004d40; margin: 0; box-sizing: border-box; }
+        .hidden { display: none !important; }
+
+        /* Estilos de las Ventanas Modales */
+        #modal-manager { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+        .modal-window { width: 100%; height: 100%; background-color: rgba(0, 77, 64, 0.7); display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .modal-content { background: white; padding: 30px 40px; border-radius: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 5px solid #ffab91; width: 90%; max-width: 450px; }
+        .modal-content h2 { color: #ff6f61; font-size: 2.8em; margin: 0 0 10px 0; }
+        .modal-content p, .story-text p { font-size: 1.3em; color: #546e7a; margin-bottom: 20px; line-height: 1.6; }
+        #player-name-input { width: 100%; padding: 15px; font-family: 'Fredoka', sans-serif; font-size: 1.2em; border: 2px solid #bcaaa4; border-radius: 12px; box-sizing: border-box; text-align: center; margin-bottom: 20px; }
+        #player-name-input:focus { outline: none; border-color: #ff6f61; }
+        .modal-button { font-family: 'Fredoka', sans-serif; font-size: 1.6em; font-weight: 500; padding: 15px 40px; border: none; background-color: #66bb6a; color: white; border-radius: 15px; cursor: pointer; transition: transform 0.2s, background-color 0.2s; }
+        .modal-button:hover { background-color: #57a05a; transform: scale(1.05); }
+
+        /* Estilos del Juego */
+        #game-container { width: 100%; max-width: 900px; background-color: #ffffff; border-radius: 25px; padding: 20px 30px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); text-align: center; border: 5px solid #ffcc80; margin: 20px auto; box-sizing: border-box; }
+        header h1 { font-size: 2.5em; color: #ff6f61; margin-bottom: 10px; }
+        header p { font-size: 1.2em; color: #546e7a; }
+        .game-area { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; margin-top: 20px; padding: 20px; background-color: #f1f8e9; border-radius: 15px; }
+        #objects-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 150px; flex: 1; padding: 10px; }
+        .object { font-size: 4em; margin: 15px; cursor: grab; transition: transform 0.2s, opacity 0.2s; position: relative; }
+        .object:hover { transform: scale(1.2) rotate(5deg); }
+        .object.dragging { opacity: 0.5; transform: scale(0.9); }
+        #backpack { position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        #backpack svg { width: 100%; height: 100%; color: #ff8a65; transition: transform 0.3s; }
+        #backpack.drag-over svg { transform: scale(1.15); color: #66bb6a; }
+        #packed-items-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 70%; height: 60%; pointer-events: none; }
+        .packed-item { font-size: 2.2em; margin: 2px; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-manager">
+        <div id="welcome-modal" class="modal-window">
+            <div class="modal-content">
+                <h2>¡Welcome! 👋</h2>
+                <p>What's your name?</p>
+                <input type="text" id="player-name-input" placeholder="Write your name here" autocomplete="off">
+                <button id="start-story-button" class="modal-button">Continue</button>
+            </div>
+        </div>
+        <div id="story-modal" class="modal-window hidden">
+            <div class="modal-content">
+                <h2>Bucky's Adventure! 🎒</h2>
+                <div class="story-text"></div>
+                <button id="start-game-button" class="modal-button">Start Mission!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <header>
+            <h1>My English Classroom</h1>
+            <p>¡Hola, <span id="player-name"></span>! Arrastra los útiles a la mochila.</p>
+        </header>
+        <main class="game-area">
+            <div id="objects-container">
+                <div class="object" draggable="true" id="pencil">✏️</div>
+                <div class="object" draggable="true" id="book">📖</div>
+                <div class="object" draggable="true" id="scissors">✂️</div>
+                <div class="object" draggable="true" id="ruler">📏</div>
+                <div class="object" draggable="true" id="glue">🧴</div>
+                <div class="object" draggable="true" id="crayon">🖍️</div>
+            </div>
+            <div id="backpack-container">
+                <div id="backpack">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.79,6.22A5.44,5.44,0,0,0,15,4H9a5.44,5.44,0,0,0-4.79,2.22L2,11.05V20a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V11.05ZM12,2.05A5.5,5.5,0,0,1,17.5,7.55V9H6.5V7.55A5.5,5.5,0,0,1,12,2.05ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,0,2H11A1,1,0,0,1,10,14Z"/></svg>
+                    <div id="packed-items-display"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- GESTIÓN DE ELEMENTOS ---
+            const modalManager = document.getElementById('modal-manager');
+            const welcomeModal = document.getElementById('welcome-modal');
+            const storyModal = document.getElementById('story-modal');
+            const gameContainer = document.getElementById('game-container');
+            
+            const startStoryButton = document.getElementById('start-story-button');
+            const startGameButton = document.getElementById('start-game-button');
+            const nameInput = document.getElementById('player-name-input');
+            const playerNameSpan = document.getElementById('player-name');
+            const storyTextElement = document.querySelector('.story-text');
+
+            // --- GESTIÓN DE LA NARRATIVA ---
+            startStoryButton.addEventListener('click', () => {
+                let playerName = nameInput.value.trim() || 'Superstar';
+                playerNameSpan.textContent = playerName;
+                storyTextElement.innerHTML = `<p>¡Hola, <strong>${playerName}</strong>! Soy Bucky, tu nueva mochila. ¿Me ayudas a guardar a mis amigos?</p>`;
+                
+                welcomeModal.classList.add('hidden');
+                storyModal.classList.remove('hidden');
+            });
+
+            startGameButton.addEventListener('click', () => {
+                modalManager.classList.add('hidden');
+                gameContainer.classList.remove('hidden');
+            });
+
+            // --- LÓGICA DEL JUEGO 1 (CÓDIGO QUE FUNCIONA) ---
+            const objects = document.querySelectorAll('.object');
+            const backpack = document.getElementById('backpack');
+            const packedItemsContainer = document.getElementById('packed-items-display');
+            let draggedObject = null;
+
+            objects.forEach(object => {
+                object.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', e.currentTarget.id);
+                    e.dataTransfer.effectAllowed = 'move';
+                    draggedObject = e.currentTarget;
+                    setTimeout(() => {
+                        e.currentTarget.classList.add('dragging');
+                    }, 0);
+                });
+
+                object.addEventListener('dragend', (e) => {
+                    e.currentTarget.classList.remove('dragging');
+                });
+            });
+
+            backpack.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            backpack.addEventListener('dragenter', (e) => {
+                e.preventDefault();
+                backpack.classList.add('drag-over');
+            });
+
+            backpack.addEventListener('dragleave', () => {
+                backpack.classList.remove('drag-over');
+            });
+
+            backpack.addEventListener('drop', (e) => {
+                e.preventDefault();
+                backpack.classList.remove('drag-over');
+
+                if (draggedObject) {
+                    draggedObject.classList.add('hidden');
+                    const packedItem = document.createElement('div');
+                    packedItem.className = 'packed-item';
+                    packedItem.innerHTML = draggedObject.innerHTML;
+                    packedItemsContainer.appendChild(packedItem);
+                    draggedObject = null;
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
