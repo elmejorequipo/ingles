@@ -657,7 +657,8 @@
             const paradeArea = document.getElementById('parade-game-area');
             paradeArea.innerHTML = '';
             gameState.paradeItemsToFind = [...Object.keys(gameData)];
-            
+            let paradeSpeedMultiplier = 1.0; // Velocidad inicial
+
             function setNextParadeTarget() {
                 if (gameState.paradeItemsToFind.length === 0) {
                     if (!gameState.completedScenes.includes('game-5')) {
@@ -690,7 +691,8 @@
                     itemElement.innerHTML = gameData[randomItemName].svg;
                     itemElement.style.left = '-80px';
                     itemElement.style.top = `${Math.random() * (paradeArea.offsetHeight - 80)}px`;
-                    itemElement.speed = Math.random() * 2 + 1;
+                    // La velocidad aumenta con el multiplicador
+                    itemElement.speed = (Math.random() * 2 + 1) * paradeSpeedMultiplier;
                     itemElement.onclick = handleParadeClick;
                     paradeArea.appendChild(itemElement);
                 }
@@ -711,6 +713,8 @@
             function handleParadeClick(e) {
                 const clickedItem = e.currentTarget;
                 if (clickedItem.dataset.item === gameState.currentItemToFind) {
+                    // Aumenta la velocidad con cada acierto.
+                    paradeSpeedMultiplier += 0.25; 
                     speak("You got it!", () => {
                         const index = gameState.paradeItemsToFind.indexOf(gameState.currentItemToFind);
                         if (index > -1) {
