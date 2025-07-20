@@ -13,37 +13,6 @@
 <body>
 
     <div id="modal-manager">
-        </div>
-
-    <div id="game-container" class="hidden">
-        
-        <div id="game-1-backpack" class="game-section">
-            </div>
-
-        <div id="game-2-find" class="game-section hidden">
-            <header>
-                <h1>Hide and Seek</h1>
-                <div id="find-command" class="command-bar">Find the...</div>
-            </header>
-            <main class="game-area">
-                <div id="find-scene">
-                    <div class="findable-object" data-name="Crayon">🖍️</div>
-                    <div class="findable-object" data-name="Eraser">🧼</div>
-                    <div class="findable-object" data-name="Glue">🧴</div>
-                    <div class="findable-object" data-name="Apple">🍎</div>
-                </div>
-            </main>
-        </div>
-
-        <div id="game-3-commands" class="game-section hidden">
-            </div>
-
-        <div id="final-success-message" class="hidden">
-            </div>
-    </div>
-    
-    <script src="script.js"></script>
-    <div id="modal-manager">
         <div id="welcome-modal" class="modal-window">
             <div class="modal-content">
                 <h2>¡Welcome! 👋</h2>
@@ -74,7 +43,9 @@
             </div>
         </div>
     </div>
+
     <div id="game-container" class="hidden">
+        
         <div id="game-1-backpack" class="game-section">
             <header>
                 <h1>My English Classroom</h1>
@@ -92,12 +63,28 @@
                 </div>
                 <div id="backpack-container">
                     <div id="backpack">
-                        <svg viewBox="0 0 24 24"><path d="M19.79,6.22A5.44,5.44,0,0,0,15,4H9a5.44,5.44,0,0,0-4.79,2.22L2,11.05V20a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V11.05ZM12,2.05A5.5,5.5,0,0,1,17.5,7.55V9H6.5V7.55A5.5,5.5,0,0,1,12,2.05ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,0,2H11A1,1,0,0,1,10,14Z"></path></svg>
+                        <svg viewBox="0 0 24 24"><path d="M19.79,6.22A5.44,5.44,0,0,0,15,4H9a5.44,5.44,0,0,0-4.79,2.22L2,11.05V20a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V11.05ZM12,2.05A5.5,5.5,0,0,1,17.5,7.55V9H6.5V7.55A5.5,5.5,0,0,1,12,2.05ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,0,2H11A1,1,0,0,1,10,14Z"/></svg>
                         <div id="packed-items-display"></div>
                     </div>
                 </div>
             </main>
         </div>
+
+        <div id="game-2-find" class="game-section hidden">
+            <header>
+                <h1>Hide and Seek</h1>
+                <div id="find-command" class="command-bar">Find the...</div>
+            </header>
+            <main class="game-area">
+                <div id="find-scene">
+                    <div class="findable-object" data-name="Crayon">🖍️</div>
+                    <div class="findable-object" data-name="Eraser">🧼</div>
+                    <div class="findable-object" data-name="Glue">🧴</div>
+                    <div class="findable-object" data-name="Apple">🍎</div>
+                </div>
+            </main>
+        </div>
+
         <div id="game-3-commands" class="game-section hidden">
             <header>
                 <h1>Magic Words</h1>
@@ -111,11 +98,14 @@
                 </div>
             </main>
         </div>
+
         <div id="final-success-message" class="hidden">
             <h2>You are a Superstar, <span class="player-name"></span>! 🌟</h2>
             <p>You completed all the missions!</p>
             <button id="reset-button">Play Again From Start</button>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
