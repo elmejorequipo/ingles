@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My English Classroom - The Story Begins</title>
-    <meta name="description" content="Una aventura interactiva para aprender inglés sobre los útiles escolares, diseñada para niños de primero de primaria.">
+    <title>My English Classroom Adventure</title>
+    <meta name="description" content="Una aventura interactiva con 3 juegos para aprender inglés sobre los útiles escolares.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,46 +12,95 @@
 </head>
 <body>
 
-    <div id="welcome-modal">
-        <div class="modal-content">
-            <h2>¡Welcome! 👋</h2>
-            <p>What's your name?</p>
-            <input type="text" id="player-name-input" placeholder="Write your name here" autocomplete="off">
-            <button id="start-story-button">Continue</button>
+    <div id="modal-manager">
+        <div id="welcome-modal" class="modal-window">
+            <div class="modal-content">
+                <h2>¡Welcome! 👋</h2>
+                <p>What's your name?</p>
+                <input type="text" id="player-name-input" placeholder="Write your name here" autocomplete="off">
+                <button class="modal-button" data-next="story-1">Continue</button>
+            </div>
+        </div>
+        <div id="story-1-modal" class="modal-window hidden">
+            <div class="modal-content">
+                <h2>Bucky's Adventure! 🎒</h2>
+                <div class="story-text"></div>
+                <button class="modal-button" data-next="game-1">Start Mission!</button>
+            </div>
+        </div>
+        <div id="story-2-modal" class="modal-window hidden">
+            <div class="modal-content">
+                <h2>Hide and Seek! 👀</h2>
+                <div class="story-text"></div>
+                <button class="modal-button" data-next="game-2">Let's find them!</button>
+            </div>
+        </div>
+        <div id="story-3-modal" class="modal-window hidden">
+             <div class="modal-content">
+                <h2>Magic Words! ✨</h2>
+                <div class="story-text"></div>
+                <button class="modal-button" data-next="game-3">Let's do magic!</button>
+            </div>
         </div>
     </div>
 
-    <div id="story-modal" class="hidden">
-        <div class="modal-content">
-            <h2 id="story-title">Bucky's Adventure! 🎒</h2>
-            <div id="story-text">
+    <div id="game-container" class="hidden">
+        
+        <div id="game-1-backpack" class="game-section">
+            <header>
+                <h1>My English Classroom</h1>
+                <p>¡Hola, <span class="player-name"></span>! Ayúdame a guardar los útiles. <br> (Drag the objects to the backpack!)</p>
+                <div class="progress-tracker">Objects Packed: 0 / 6</div>
+            </header>
+            <main class="game-area">
+                <div id="objects-container">
+                    <div class="object" draggable="true" id="pencil" data-name="Pencil">✏️<span class="tooltip">Pencil</span></div>
+                    <div class="object" draggable="true" id="book" data-name="Book">📖<span class="tooltip">Book</span></div>
+                    <div class="object" draggable="true" id="scissors" data-name="Scissors">✂️<span class="tooltip">Scissors</span></div>
+                    <div class="object" draggable="true" id="ruler" data-name="Ruler">📏<span class="tooltip">Ruler</span></div>
+                    <div class="object" draggable="true" id="glue" data-name="Glue">🧴<span class="tooltip">Glue</span></div>
+                    <div class="object" draggable="true" id="crayon" data-name="Crayon">🖍️<span class="tooltip">Crayon</span></div>
                 </div>
-            <button id="play-game-button">Start Mission!</button>
+                <div id="backpack-container">
+                    <div id="backpack">
+                        <svg viewBox="0 0 24 24"><path d="M19.79,6.22A5.44,5.44,0,0,0,15,4H9a5.44,5.44,0,0,0-4.79,2.22L2,11.05V20a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V11.05ZM12,2.05A5.5,5.5,0,0,1,17.5,7.55V9H6.5V7.55A5.5,5.5,0,0,1,12,2.05ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,0,2H11A1,1,0,0,1,10,14Z"/></svg>
+                        <div id="packed-items-display"></div>
+                    </div>
+                </div>
+            </main>
         </div>
-    </div>
 
-    <div class="container hidden">
-        <header>
-            <h1>My English Classroom</h1>
-            <p id="instructions">¡Hola, <span id="player-name"></span>! ✨ Ayúdame a guardar los útiles. <br> (Drag the objects to the backpack!)</p>
-            <div id="progress-tracker">Objects Packed: 0 / 4</div>
-        </header>
+        <div id="game-2-find" class="game-section hidden">
+            <header>
+                <h1>Hide and Seek</h1>
+                <div id="find-command" class="command-bar">Find the...</div>
+            </header>
+            <main id="find-scene" class="game-area">
+                <div class="findable-object" data-name="Crayon">🖍️</div>
+                <div class="findable-object" data-name="Eraser">🧼</div>
+                <div class="findable-object" data-name="Glue">🧴</div>
+                <div class="findable-object" data-name="Apple">🍎</div>
+            </main>
+        </div>
 
-        <main class="game-area">
-            <div id="objects-container">
-                <div class="object" draggable="true" id="pencil" data-name="Pencil">✏️<span class="tooltip">Pencil</span></div>
-                <div class="object" draggable="true" id="book" data-name="Book">📖<span class="tooltip">Book</span></div>
-                <div class="object" draggable="true" id="scissors" data-name="Scissors">✂️<span class="tooltip">Scissors</span></div>
-                <div class="object" draggable="true" id="ruler" data-name="Ruler">📏<span class="tooltip">Ruler</span></div>
-            </div>
-            <div id="backpack-container">
-                <div id="backpack"><div id="packed-items-display"></div></div>
-            </div>
-        </main>
+        <div id="game-3-commands" class="game-section hidden">
+            <header>
+                <h1>Magic Words</h1>
+                <div id="do-command" class="command-bar">Now...</div>
+            </header>
+            <main class="game-area">
+                <div id="command-scene">
+                    <div class="command-object" data-action="open">📖</div>
+                    <div class="command-object" data-action="draw">✏️</div>
+                    <div class="command-object" data-action="glue">🧴</div>
+                </div>
+            </main>
+        </div>
 
-        <div id="success-message" class="hidden">
-            <h2>Well Done, <span id="player-name-success"></span>! 🎉</h2>
-            <button id="reset-button">Play Again!</button>
+        <div id="final-success-message" class="hidden">
+            <h2>You are a Superstar, <span class="player-name"></span>! 🌟</h2>
+            <p>You completed all the missions!</p>
+            <button id="reset-button">Play Again From Start</button>
         </div>
     </div>
 
