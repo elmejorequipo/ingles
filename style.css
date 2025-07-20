@@ -1,15 +1,4 @@
-/* ... (Todo el CSS anterior es el mismo hasta el final) ... */
-/* Solo se añade una pequeña regla para el texto de la historia */
-
-.modal-content #story-text p {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin-bottom: 20px;
-    color: #37474f;
-}
-
-/* (El resto del CSS de la v1.2 no necesita cambios) */
-/* ---- Estilos Generales ---- */
+/* ESTILOS GENERALES Y MODALES */
 body {
     font-family: 'Fredoka', sans-serif;
     background-color: #e0f7fa;
@@ -18,27 +7,32 @@ body {
     box-sizing: border-box;
 }
 
-/* Estilos para la Ventana Modal */
-#welcome-modal, #story-modal { /* Aplicamos el mismo estilo a ambas ventanas */
+#modal-manager {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 77, 64, 0.7); /* Fondo oscuro semitransparente */
+    z-index: 1000;
+}
+
+.modal-window {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 77, 64, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out, visibility 0.5s;
     padding: 20px;
     box-sizing: border-box;
+    opacity: 1;
+    transition: opacity 0.5s, visibility 0.5s;
 }
 
-#welcome-modal.hidden, #story-modal.hidden {
+.modal-window.hidden {
     opacity: 0;
     visibility: hidden;
+    display: none;
 }
 
 .modal-content {
@@ -46,8 +40,8 @@ body {
     padding: 30px 40px;
     border-radius: 25px;
     text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    border: 5px solid #ffab91; /* Borde coral claro */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 5px solid #ffab91;
     width: 90%;
     max-width: 450px;
 }
@@ -58,10 +52,12 @@ body {
     margin: 0 0 10px 0;
 }
 
-.modal-content p {
+.modal-content p,
+.story-text p {
     font-size: 1.3em;
     color: #546e7a;
     margin-bottom: 20px;
+    line-height: 1.6;
 }
 
 #player-name-input {
@@ -81,61 +77,337 @@ body {
     border-color: #ff6f61;
 }
 
-#start-story-button, #play-game-button { /* Estilo para ambos botones */
+.modal-button {
     font-family: 'Fredoka', sans-serif;
     font-size: 1.6em;
     font-weight: 500;
     padding: 15px 40px;
     border: none;
-    background-color: #66bb6a; /* Verde alegre */
+    background-color: #66bb6a;
     color: white;
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.2s, background-color 0.2s;
 }
 
-#start-story-button:hover, #play-game-button:hover {
+.modal-button:hover {
     background-color: #57a05a;
     transform: scale(1.05);
 }
 
-/* ---- Contenedor principal del juego ---- */
-.container {
+/* CONTENEDOR PRINCIPAL DEL JUEGO */
+#game-container {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     background-color: #ffffff;
     border-radius: 25px;
     padding: 20px 30px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     text-align: center;
     border: 5px solid #ffcc80;
-    margin: 20px;
-    opacity: 1; /* Hacemos el juego visible por defecto en el CSS */
-    transition: opacity 0.5s ease-in-out;
+    margin: 20px auto;
+    box-sizing: border-box;
 }
 
-.container.hidden { /* Y lo ocultamos con JS al principio */
-    opacity: 0;
+.game-section {
+    padding: 10px;
+}
+
+.game-section.hidden {
     display: none;
 }
 
-/* ... (el resto del CSS anterior sigue aquí sin cambios) ... */
-#instructions { font-size: 1.2em; color: #546e7a; }
-#progress-tracker { font-size: 1.3em; font-weight: 500; margin-top: 15px; color: #00796b; background-color: #e8f5e9; padding: 8px 15px; border-radius: 20px; display: inline-block; }
-.game-area { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; margin-top: 20px; padding: 20px; background-color: #f1f8e9; border-radius: 15px; }
-#objects-container, #backpack-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 150px; flex: 1; padding: 10px; }
-.object { font-size: 4em; margin: 15px; cursor: grab; transition: transform 0.2s ease-in-out; position: relative; }
-.object:hover { transform: scale(1.2) rotate(5deg); }
-.object.dragging { opacity: 0.5; transform: scale(1.1); }
-.tooltip { visibility: hidden; width: 120px; background-color: #546e7a; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -60px; opacity: 0; transition: opacity 0.3s; }
-.object:hover .tooltip { visibility: visible; opacity: 1; }
-#backpack { font-size: 7em; padding: 20px; border-radius: 50%; transition: all 0.3s; position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%); }
-#backpack.drag-over { background-color: #a5d6a7; transform: scale(1.1); }
-#packed-items-display { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 80%; height: 80%; }
-.packed-item { font-size: 0.3em; margin: 2px; }
-#success-message { padding: 20px; margin-top: 20px; }
-#success-message h2 { color: #66bb6a; font-size: 3em; }
-#reset-button { font-family: 'Fredoka', sans-serif; font-size: 1.5em; padding: 15px 30px; border: none; background-color: #ff6f61; color: white; border-radius: 15px; cursor: pointer; transition: background-color 0.2s; }
-#reset-button:hover { background-color: #e55a50; }
-.hidden { display: none; }
-@media (max-width: 600px) { .game-area { flex-direction: column; } header h1 { font-size: 2em; } .object { font-size: 3em; } #backpack { font-size: 6em; width: 120px; height: 120px; } }
+.game-area {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+header h1 {
+    font-size: 2.5em;
+    color: #ff6f61;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #546e7a;
+}
+
+.progress-tracker {
+    font-size: 1.3em;
+    font-weight: 500;
+    margin-top: 15px;
+    color: #00796b;
+    background-color: #e8f5e9;
+    padding: 8px 15px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* ESTILOS JUEGO 1 (Pack Backpack) */
+#game-1-backpack .game-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f1f8e9;
+}
+
+#objects-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-height: 150px;
+    flex: 1;
+    padding: 10px;
+}
+
+.object {
+    font-size: 4em;
+    margin: 15px;
+    cursor: grab;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.object:hover {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.object.dragging {
+    opacity: 0.5;
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: #37474f;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 115%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.5em;
+    font-weight: 500;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #ffffff;
+}
+
+.object:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+#backpack {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+}
+
+#backpack svg {
+    width: 100%;
+    height: 100%;
+    color: #ff8a65;
+    transition: transform 0.3s;
+}
+
+#backpack.drag-over svg {
+    transform: scale(1.15);
+    color: #66bb6a;
+}
+
+#packed-items-display {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 70%;
+    height: 60%;
+}
+
+.packed-item {
+    font-size: 2.2em;
+    margin: 2px;
+}
+
+/* ESTILOS JUEGO 2 (Find Object) */
+.command-bar {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #d84315;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #fff9c4;
+    border-radius: 15px;
+    border: 3px dashed #ffb74d;
+}
+
+#game-2-find .game-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    background-color: transparent;
+}
+
+#find-scene {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    background: url('https://i.pinimg.com/originals/a3/57/3e/a3573e6a0815340a653428fa6930a662.jpg') no-repeat center center;
+    background-size: cover;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 5px solid #a5d6a7;
+}
+
+.findable-object {
+    position: absolute;
+    font-size: 3em;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.findable-object:hover {
+    transform: scale(1.2);
+}
+
+.found {
+    animation: found-animation 0.5s ease-out;
+}
+
+@keyframes found-animation {
+    0% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(1.5) rotate(15deg);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ESTILOS JUEGO 3 (Listen and Do) */
+#game-3-commands .game-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f1f8e9;
+}
+
+#command-scene {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.command-object {
+    font-size: 8em;
+    cursor: pointer;
+    transition: transform 0.3s;
+    margin: 20px;
+}
+
+.command-object:hover {
+    transform: scale(1.1);
+}
+
+.command-object.animated {
+    animation: action-animation 1s ease-in-out;
+}
+
+@keyframes action-animation {
+    0% {
+        transform: translateY(0) rotate(0);
+    }
+    50% {
+        transform: translateY(-20px) rotate(10deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0);
+    }
+}
+
+/* MENSAJE FINAL Y BOTÓN DE REINICIO */
+#final-success-message {
+    text-align: center;
+    padding: 20px;
+}
+
+#final-success-message h2 {
+    color: #66bb6a;
+    font-size: 3em;
+}
+
+#final-success-message p {
+    font-size: 1.5em;
+}
+
+#reset-button {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.5em;
+    padding: 15px 30px;
+    border: none;
+    background-color: #ff6f61;
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#reset-button:hover {
+    background-color: #e55a50;
+}
+
+/* DISEÑO RESPONSIVO PARA MÓVILES */
+@media (max-width: 600px) {
+    .modal-content h2 {
+        font-size: 2em;
+    }
+    .modal-content p {
+        font-size: 1.1em;
+    }
+    #game-container {
+        padding: 15px;
+    }
+    #game-1-backpack .game-area,
+    #game-3-commands .game-area {
+        flex-direction: column;
+    }
+    .object {
+        font-size: 3em;
+    }
+    #backpack {
+        width: 120px;
+        height: 120px;
+    }
+    #find-scene {
+        height: 300px;
+    }
+    .findable-object {
+        font-size: 2.5em;
+    }
+    .command-object {
+        font-size: 6em;
+    }
+}
