@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("¡Aventura de Bucky iniciada! La página se ha cargado.");
-
     // --- GESTIÓN GLOBAL ---
     let playerName = '';
     const synth = window.speechSynthesis;
@@ -11,25 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let game1Initialized = false, game2Initialized = false, game3Initialized = false;
 
     // --- GESTIÓN DE MODALES Y NARRATIVA ---
-    const modals = {
-        'welcome': document.getElementById('welcome-modal'), 'story-1': document.getElementById('story-1-modal'),
-        'story-2': document.getElementById('story-2-modal'), 'story-3': document.getElementById('story-3-modal'),
-    };
-    const games = {
-        'game-1': document.getElementById('game-1-backpack'), 'game-2': document.getElementById('game-2-find'),
-        'game-3': document.getElementById('game-3-commands'),
-    };
+    const modals = { 'welcome': document.getElementById('welcome-modal'), 'story-1': document.getElementById('story-1-modal'), 'story-2': document.getElementById('story-2-modal'), 'story-3': document.getElementById('story-3-modal'), };
+    const games = { 'game-1': document.getElementById('game-1-backpack'), 'game-2': document.getElementById('game-2-find'), 'game-3': document.getElementById('game-3-commands'), };
 
     modalManager.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal-button')) {
-            console.log("Botón de modal presionado. Avanzando...");
             const next = e.target.dataset.next;
-            handleFlow(next);
+            if (modals[next] || games[next]) { handleFlow(next); }
         }
     });
     
     function handleFlow(step) {
-        console.log(`Manejando flujo al paso: ${step}`);
         Object.values(modals).forEach(m => m.classList.add('hidden'));
         Object.values(games).forEach(g => g.classList.add('hidden'));
         
@@ -44,66 +34,144 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setupStory1() { playerName = document.getElementById('player-name-input').value.trim() || 'Superstar'; document.querySelectorAll('.player-name').forEach(span => span.textContent = playerName); modals['story-1'].querySelector('.story-text').innerHTML = `<p>¡Hola, <strong>${playerName}</strong>! Soy Bucky, tu nueva mochila. ¿Me ayudas a guardar a mis amigos?</p>`; console.log("Historia 1 configurada.");}
-    function setupStory2() { modals['story-2'].querySelector('.story-text').innerHTML = `<p>¡Buen trabajo, <strong>${playerName}</strong>! ¡Ahora vamos a jugar a las escondidas!</p>`; console.log("Historia 2 configurada.");}
-    function setupStory3() { modals['story-3'].querySelector('.story-text').innerHTML = `<p>¡Eres un gran explorador, <strong>${playerName}</strong>! Última misión: ¡las palabras mágicas!</p>`; console.log("Historia 3 configurada.");}
+    function setupStory1() { playerName = document.getElementById('player-name-input').value.trim() || 'Superstar'; document.querySelectorAll('.player-name').forEach(span => span.textContent = playerName); modals['story-1'].querySelector('.story-text').innerHTML = `<p>¡Hola, <strong>${playerName}</strong>! Soy Bucky, tu nueva mochila. ¿Me ayudas a guardar a mis amigos?</p>`; }
+    function setupStory2() { modals['story-2'].querySelector('.story-text').innerHTML = `<p>¡Buen trabajo, <strong>${playerName}</strong>! ¡Ahora vamos a jugar a las escondidas!</p>`; }
+    function setupStory3() { modals['story-3'].querySelector('.story-text').innerHTML = `<p>¡Eres un gran explorador, <strong>${playerName}</strong>! Última misión: ¡las palabras mágicas!</p>`; }
 
-    // --- UTILIDADES ---
-    function playSound(type) { /*...*/ }
-    function speak(text) { /*...*/ }
+    function playSound(type) {const o=audioContext.createOscillator();const g=audioContext.createGain();o.connect(g);g.connect(audioContext.destination);if(type==='pickup'){o.type='square';o.frequency.setValueAtTime(150,audioContext.currentTime);g.gain.setValueAtTime(0.1,audioContext.currentTime);}else if(type==='drop'){o.type='sine';o.frequency.setValueAtTime(440,audioContext.currentTime);g.gain.setValueAtTime(0.2,audioContext.currentTime);}o.start();o.stop(audioContext.currentTime+0.1);}
+    function speak(text) { if(synth.speaking) return; const u = new SpeechSynthesisUtterance(text); u.lang = 'en-US'; synth.speak(u); }
 
-    // --- JUEGO 1: PACK YOUR BACKPACK ---
+    // --- LÓGICA JUEGO 1: GUARDAR EN LA MOCHILA (CON CLICS) ---
     const objects = document.querySelectorAll('.object');
     const backpack = document.getElementById('backpack');
-    let draggedObject = null;
+    const packedItemsContainer = document.getElementById('packed-items-display');
+    const progressTracker1 = document.querySelector('#game-1-backpack .progress-tracker');
+    let selectedObject = null;
+    let objectsInBackpack = 0;
     
     function initGame1() {
-        console.log("Inicializando Juego 1: Arrastrar a la mochila.");
         game1Initialized = true;
         
         objects.forEach(object => {
-            console.log(`Añadiendo listeners al objeto: ${object.id}`);
-            object.addEventListener('dragstart', (e) => { 
-                console.log(`--- DRAGSTART: Empezando a arrastrar ${e.currentTarget.id}`);
-                e.dataTransfer.setData('text/plain', e.currentTarget.id);
-                e.dataTransfer.effectAllowed = 'move';
-                draggedObject = e.currentTarget;
-                setTimeout(() => e.currentTarget.classList.add('dragging'), 0); 
-            });
-            object.addEventListener('dragend', (e) => { 
-                console.log(`--- DRAGEND: Se terminó de arrastrar ${e.currentTarget.id}`);
-                e.currentTarget.classList.remove('dragging');
+            // Listener para seleccionar un objeto
+            object.addEventListener('click', () => {
+                if (object.classList.contains('packed')) return; // No hacer nada si ya está guardado
+                
+                // Si ya había otro objeto seleccionado, quitarle la selección
+                if (selectedObject) {
+                    selectedObject.classList.remove('selected');
+                }
+                
+                // Seleccionar el nuevo objeto
+                selectedObject = object;
+                selectedObject.classList.add('selected');
+                playSound('pickup');
+                speak(selectedObject.dataset.name);
             });
         });
 
-        backpack.addEventListener('dragenter', (e) => { 
-            e.preventDefault(); 
-            console.log("--- DRAGENTER: Objeto entrando en la mochila.");
-            backpack.classList.add('drag-over'); 
-        });
-        backpack.addEventListener('dragover', (e) => { 
-            e.preventDefault();
-            // console.log("--- DRAGOVER: Objeto sobre la mochila."); // Se comenta para no llenar la consola
-        });
-        backpack.addEventListener('dragleave', () => { 
-            console.log("--- DRAGLEAVE: Objeto saliendo de la mochila.");
-            backpack.classList.remove('drag-over'); 
-        });
-        backpack.addEventListener('drop', (e) => {
-            e.preventDefault();
-            console.log("--- DROP: ¡Objeto soltado en la mochila!");
-            backpack.classList.remove('drag-over');
-            if (draggedObject && !draggedObject.classList.contains('packed')) {
-                console.log(`Acción de drop válida para: ${draggedObject.id}`);
-                draggedObject.classList.add('hidden', 'packed');
-                // ... resto de la lógica de éxito
-                handleFlow('story-2');
-            } else {
-                console.log("Acción de drop inválida.");
+        // Listener para guardar en la mochila
+        backpack.addEventListener('click', () => {
+            if (selectedObject) {
+                playSound('drop');
+                
+                // Mover el objeto a la mochila
+                packedItemsContainer.innerHTML += `<div class="packed-item">${selectedObject.innerHTML.split('<span')[0]}</div>`;
+                selectedObject.classList.add('hidden', 'packed');
+                selectedObject.classList.remove('selected');
+                
+                objectsInBackpack++;
+                progressTracker1.textContent = `Objects Packed: ${objectsInBackpack} / ${objects.length}`;
+                
+                selectedObject = null; // Limpiar selección
+                
+                // Comprobar si el juego ha terminado
+                if (objectsInBackpack === objects.length) {
+                    setTimeout(() => {
+                        modalManager.classList.remove('hidden');
+                        handleFlow('story-2');
+                    }, 1000);
+                }
             }
         });
     }
 
-    // El resto de la lógica de los juegos 2 y 3 no se incluye aquí para enfocarnos en el problema principal.
-    // ...
+    // --- LÓGICA JUEGO 2: FIND THE OBJECT ---
+    const findScene = document.getElementById('find-scene');
+    const findableObjects = Array.from(findScene.querySelectorAll('.findable-object'));
+    const findCommand = document.getElementById('find-command');
+    let objectsToFind = [];
+    let currentObjectToFind = null;
+    
+    function initGame2() {
+        game2Initialized = true;
+        objectsToFind = [...findableObjects].sort(() => 0.5 - Math.random());
+        findableObjects.forEach(obj => {
+            obj.style.top = `${Math.random() * 80 + 10}%`;
+            obj.style.left = `${Math.random() * 80 + 10}%`;
+            obj.classList.remove('hidden', 'found');
+            obj.addEventListener('click', handleFindClick);
+        });
+        nextObjectToFind();
+    }
+    
+    function nextObjectToFind() {
+        if (objectsToFind.length === 0) { setTimeout(() => { modalManager.classList.remove('hidden'); handleFlow('story-3'); }, 1000); return; }
+        currentObjectToFind = objectsToFind.pop();
+        const nameToFind = currentObjectToFind.dataset.name;
+        findCommand.textContent = `Find the ${nameToFind}`; speak(`Find the ${nameToFind}`);
+    }
+
+    function handleFindClick(e) {
+        const clickedObject = e.currentTarget;
+        if (clickedObject === currentObjectToFind) {
+            playSound('drop'); clickedObject.classList.add('found');
+            clickedObject.removeEventListener('click', handleFindClick);
+            setTimeout(nextObjectToFind, 1000);
+        } else { playSound('pickup'); }
+    }
+
+    // --- LÓGICA JUEGO 3: LISTEN AND DO ---
+    const commandObjects = document.querySelectorAll('.command-object');
+    const doCommand = document.getElementById('do-command');
+    const actions = [
+        { action: 'open', element: document.querySelector('[data-action="open"]'), text: 'Open the book' },
+        { action: 'draw', element: document.querySelector('[data-action="draw"]'), text: 'Draw with the pencil' },
+        { action: 'glue', element: document.querySelector('[data-action="glue"]'), text: 'Use the glue' }
+    ];
+    let currentAction = 0;
+
+    function initGame3() {
+        game3Initialized = true;
+        currentAction = 0;
+        commandObjects.forEach(obj => {
+            obj.classList.remove('animated');
+            obj.addEventListener('click', handleCommandClick);
+        });
+        nextCommand();
+    }
+
+    function nextCommand() {
+        if (currentAction >= actions.length) {
+            setTimeout(() => {
+                games['game-3'].classList.add('hidden');
+                document.getElementById('final-success-message').classList.remove('hidden');
+            }, 1000); return;
+        }
+        doCommand.textContent = actions[currentAction].text; speak(actions[currentAction].text);
+    }
+
+    function handleCommandClick(e) {
+        const clickedAction = e.currentTarget.dataset.action;
+        if(clickedAction === actions[currentAction].action) {
+            playSound('drop'); e.currentTarget.classList.add('animated');
+            currentAction++;
+            setTimeout(() => { e.currentTarget.classList.remove('animated'); nextCommand(); }, 1500);
+        } else { playSound('pickup'); }
+    }
+    
+    // --- LÓGICA DE REINICIO ---
+    document.getElementById('reset-button').addEventListener('click', () => {
+        location.reload();
+    });
 });
