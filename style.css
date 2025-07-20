@@ -146,14 +146,6 @@ header p {
 }
 
 /* ESTILOS JUEGO 1 (Pack Backpack) */
-
-.object.selected {
-    transform: scale(1.2) rotate(5deg);
-    border: 5px dashed #ffb74d;
-    border-radius: 20px;
-    background-color: #fff9c4;
-}
-
 #game-1-backpack .game-area {
     display: flex;
     flex-wrap: wrap;
@@ -186,31 +178,7 @@ header p {
 
 .object.dragging {
     opacity: 0.5;
-}
-
-.tooltip {
-    visibility: hidden;
-    background-color: #37474f;
-    color: #fff;
-    text-align: center;
-    border-radius: 8px;
-    padding: 8px 12px;
-    position: absolute;
-    z-index: 10;
-    bottom: 115%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.5em;
-    font-weight: 500;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 2px solid #ffffff;
-}
-
-.object:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
+    transform: scale(0.9);
 }
 
 #backpack {
@@ -246,12 +214,18 @@ header p {
     align-items: center;
     width: 70%;
     height: 60%;
+    pointer-events: none; /* Evita que los iconos internos interfieran con el 'drop' */
 }
 
 .packed-item {
     font-size: 2.2em;
     margin: 2px;
 }
+
+.object.hidden {
+    display: none;
+}
+
 
 /* ESTILOS JUEGO 2 (Find Object) */
 .command-bar {
