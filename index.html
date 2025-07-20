@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My English Classroom - The Story Begins</title>
+    <meta name="description" content="Una aventura interactiva para aprender inglés sobre los útiles escolares, diseñada para niños de primero de primaria.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="welcome-modal">
+        <div class="modal-content">
+            <h2>¡Welcome! 👋</h2>
+            <p>What's your name?</p>
+            <input type="text" id="player-name-input" placeholder="Write your name here" autocomplete="off">
+            <button id="start-story-button">Continue</button>
+        </div>
+    </div>
+
+    <div id="story-modal" class="hidden">
+        <div class="modal-content">
+            <h2 id="story-title">Bucky's Adventure! 🎒</h2>
+            <div id="story-text">
+                </div>
+            <button id="play-game-button">Start Mission!</button>
+        </div>
+    </div>
+
+    <div class="container hidden">
+        <header>
+            <h1>My English Classroom</h1>
+            <p id="instructions">¡Hola, <span id="player-name"></span>! ✨ Ayúdame a guardar los útiles. <br> (Drag the objects to the backpack!)</p>
+            <div id="progress-tracker">Objects Packed: 0 / 4</div>
+        </header>
+
+        <main class="game-area">
+            <div id="objects-container">
+                <div class="object" draggable="true" id="pencil" data-name="Pencil">✏️<span class="tooltip">Pencil</span></div>
+                <div class="object" draggable="true" id="book" data-name="Book">📖<span class="tooltip">Book</span></div>
+                <div class="object" draggable="true" id="scissors" data-name="Scissors">✂️<span class="tooltip">Scissors</span></div>
+                <div class="object" draggable="true" id="ruler" data-name="Ruler">📏<span class="tooltip">Ruler</span></div>
+            </div>
+            <div id="backpack-container">
+                <div id="backpack"><div id="packed-items-display"></div></div>
+            </div>
+        </main>
+
+        <div id="success-message" class="hidden">
+            <h2>Well Done, <span id="player-name-success"></span>! 🎉</h2>
+            <button id="reset-button">Play Again!</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
