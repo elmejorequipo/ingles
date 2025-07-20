@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebQuest: Los Guardianes de la Mochila Perdida</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Bangers&display=swap" rel="stylesheet">
+
+    <style>
+        /* Paleta de Colores y Estilos Generales */
+        :root {
+            --primary-color: #4A90E2; /* Azul aventura */
+            --secondary-color: #F5A623; /* Naranja tesoro */
+            --accent-color: #50E3C2; /* Verde esmeralda */
+            --bg-color: #F4F7F6; /* Fondo suave */
+            --text-color: #333;
+            --card-bg: #FFFFFF;
+            --font-main: 'Lato', sans-serif;
+            --font-title: 'Bangers', cursive;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* Tipografía y Títulos */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-title);
+            color: var(--primary-color);
+            letter-spacing: 1.5px;
+        }
+        
+        #main-title {
+            font-size: 3.5rem;
+            color: var(--secondary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Barra de Navegación */
+        .nav-tabs {
+            border-bottom: 3px solid var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .nav-tabs .nav-link {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            color: var(--primary-color);
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .nav-tabs .nav-link:hover:not(.disabled) {
+            border-bottom-color: var(--secondary-color);
+            background-color: #e9f2fe;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--secondary-color);
+            background-color: transparent;
+            border-color: var(--primary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .nav-tabs .nav-link.disabled {
+            color: #999;
+            background-color: transparent;
+            cursor: not-allowed;
+        }
+
+        /* Contenido y Tarjetas */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        /* Botones */
+        .btn-magic {
+            background-color: var(--secondary-color);
+            color: white;
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn-magic:hover {
+            background-color: #e0941c;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Acordeón para el Proceso */
+        .accordion-button {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .accordion-button:not(.collapsed) {
+            color: white;
+            background-color: var(--primary-color);
+        }
+        .accordion-button:focus {
+            box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.5);
+        }
+
+        /* Minijuegos */
+        .quiz-option.correct {
+            border: 2px solid var(--accent-color);
+            background-color: #e6fcf5;
+        }
+        .quiz-option.incorrect {
+            border: 2px solid #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .drag-item {
+            cursor: grab;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .drop-zone {
+            border: 2px dashed var(--primary-color);
+            min-height: 80px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .drop-zone.over {
+            background-color: #e9f2fe;
+        }
+        .drop-zone.correct {
+            border-style: solid;
+            border-color: var(--accent-color);
+            background-color: #e6fcf5;
+        }
+        
+        /* Animación de entrada */
+        .tab-pane {
+            animation: fadeIn 0.8s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="container text-center py-4">
+        <h1 id="main-title"></h1>
+    </header>
+
+    <div class="container">
+        <ul class="nav nav-tabs" id="webquestTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="introduccion-tab" data-bs-toggle="tab" data-bs-target="#introduccion" type="button" role="tab" aria-controls="introduccion" aria-selected="true">Introducción</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link disabled" id="tarea-tab" data-bs-toggle="tab" data-bs-target="#tarea" type="button" role="tab" aria-controls="tarea" aria-selected="false" tabindex="-1">Tarea</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link disabled" id="proceso-tab" data-bs-toggle="tab" data-bs-target="#proceso" type="button" role="tab" aria-controls="proceso" aria-selected="false" tabindex="-1">Proceso</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link disabled" id="recursos-tab" data-bs-toggle="tab" data-bs-target="#recursos" type="button" role="tab" aria-controls="recursos" aria-selected="false" tabindex="-1">Recursos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link disabled" id="evaluacion-tab" data-bs-toggle="tab" data-bs-target="#evaluacion" type="button" role="tab" aria-controls="evaluacion" aria-selected="false" tabindex="-1">Evaluación</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link disabled" id="conclusion-tab" data-bs-toggle="tab" data-bs-target="#conclusion" type="button" role="tab" aria-controls="conclusion" aria-selected="false" tabindex="-1">Conclusión</button>
+            </li>
+        </ul>
+
+        <main class="tab-content pt-4" id="webquestTabContent">
+            
+            <section class="tab-pane fade show active" id="introduccion" role="tabpanel" aria-labelledby="introduccion-tab">
+                <div class="card">
+                    <div class="card-header" id="intro-title"></div>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <p id="intro-narrative" class="lead"></p>
+                            </div>
+                            <div class="col-md-4">
+                                <img id="intro-image" src="" class="img-fluid rounded shadow" alt="Imagen de la aventura">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" data-continue-to="tarea">¡Acepto la Misión! <i class="bi bi-rocket-takeoff-fill"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-pane fade" id="tarea" role="tabpanel" aria-labelledby="tarea-tab">
+                 <div class="card">
+                    <div class="card-header" id="task-title"></div>
+                    <div class="card-body">
+                        <p id="task-description" class="lead"></p>
+                    </div>
+                    <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" data-continue-to="proceso">Entendido, ¡A la Aventura! <i class="bi bi-map-fill"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-pane fade" id="proceso" role="tabpanel" aria-labelledby="proceso-tab">
+                 <div class="card">
+                    <div class="card-header" id="process-title"></div>
+                    <div class="card-body">
+                        <p class="lead">Sigue estos pasos para recuperar los tesoros. ¡Cada paso es una misión!</p>
+                        <div class="accordion" id="process-accordion">
+                            </div>
+                    </div>
+                     <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" id="process-continue-btn" data-continue-to="recursos" disabled>Misiones Completadas, Ver Recursos <i class="bi bi-tools"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-pane fade" id="recursos" role="tabpanel" aria-labelledby="recursos-tab">
+                 <div class="card">
+                    <div class="card-header" id="resources-title"></div>
+                    <div class="card-body">
+                        <p class="lead">Usa estas pistas secretas para ayudarte en tu aventura. Cada una contiene información valiosa.</p>
+                        <div id="resources-list" class="list-group">
+                           </div>
+                    </div>
+                     <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" data-continue-to="evaluacion">He Revisado las Pistas <i class="bi bi-check-circle-fill"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-pane fade" id="evaluacion" role="tabpanel" aria-labelledby="evaluacion-tab">
+                <div class="card">
+                    <div class="card-header" id="evaluation-title"></div>
+                    <div class="card-body">
+                        <h3 id="rubric-title" class="text-center mb-4"></h3>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead id="rubric-head" class="table-dark"></thead>
+                                <tbody id="rubric-body"></tbody>
+                            </table>
+                        </div>
+                        <hr class="my-5">
+                        <div id="final-quiz-container">
+                            </div>
+                    </div>
+                    <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" id="evaluation-continue-btn" data-continue-to="conclusion" disabled>Ver mi Conclusión <i class="bi bi-award-fill"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="tab-pane fade" id="conclusion" role="tabpanel" aria-labelledby="conclusion-tab">
+                 <div class="card text-center">
+                    <div class="card-header" id="conclusion-title"></div>
+                    <div class="card-body">
+                         <i class="bi bi-stars text-warning" style="font-size: 5rem;"></i>
+                        <p id="conclusion-reflection" class="lead mt-3"></p>
+                        <div id="conclusion-summary" class="mt-4"></div>
+                        <div id="conclusion-questions" class="mt-4 alert alert-info"></div>
+                    </div>
+                     <div class="card-footer text-center bg-transparent border-0 py-3">
+                         <button class="btn btn-magic" id="restart-btn"><i class="bi bi-arrow-clockwise"></i> Reiniciar Aventura</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="text-center text-muted py-4 mt-5">
+        <p>&copy; 2025 - Aplicación WebQuest Dinámica</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script type="module">
+        /**
+         * =================================================================
+         * ARQUITECTURA DE CONTENIDO (JSON)
+         * Toda la información de la WebQuest se define aquí.
+         * =================================================================
+         */
+        const webQuestContent = {
+          "tituloGeneral": "WebQuest: Los Guardianes de la Mochila Perdida",
+          "introduccion": {
+            "titulo": "¡Una Llamada de Auxilio desde el Mundo de los Juguetes!",
+            "narrativa": "¡Atención, valiente explorador! Soy el Capitán Leo, el león guardián del Mundo de los Juguetes. El travieso duende Pillo ha robado la Mochila Mágica de la Creación, que contiene seis objetos poderosos. Sin ellos, nuestro mundo pierde su color y magia. Pillo ha escondido estos objetos y los ha protegido con acertijos en un idioma secreto: 'inglés'. Te nombro 'Guardián de la Mochila Perdida'. Tu misión es recuperar los tesoros y devolvernos la magia.",
+            "imagen": "https://images.unsplash.com/photo-1576758793321-c4f551913b4e?q=80&w=1780&auto=format&fit=crop"
+          },
+          "tarea": {
+            "titulo": "La Misión Final - El Ritual de la Creación",
+            "descripcion": "¡Has recuperado los seis tesoros! Ahora, para restaurar la magia, debes preparar y presentar el 'Kit Mágico de la Creación'. Para ello: 1) Dibuja los seis útiles escolares en un póster. 2) Escribe su nombre secreto en inglés debajo de cada uno. 3) Graba un video corto presentando tu póster y diciendo el conjuro para cada objeto, por ejemplo: 'I have a pencil'."
+          },
+          "proceso": {
+            "titulo": "La Senda de los Tesoros Escondidos",
+            "pasos": [
+              {
+                "id": "paso1",
+                "titulo": "Misión 1: El Bosque de los Lápices Parlantes",
+                "instrucciones": "Pillo ha escondido el 'pencil' y el 'book'. ¡Resuelve su acertijo para recuperarlos! Supera el 'Eco del Bosque' para demostrar que conoces sus nombres secretos.",
+                "minijuego": {
+                  "tipo": "quiz",
+                  "preguntas": [
+                    { "pregunta": "¿Cuál de estos es un 'pencil'?", "opciones": ["Book", "Pencil", "Crayon"], "respuesta": "Pencil", "imagen": "https://images.unsplash.com/photo-1588216847849-dd524a8b753e?q=80&w=1770&auto=format&fit=crop" },
+                    { "pregunta": "¿Cómo se llama el objeto para leer historias?", "opciones": ["Book", "Scissors", "Glue"], "respuesta": "Book", "imagen": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1674&auto=format&fit=crop" }
+                  ]
+                }
+              },
+              {
+                "id": "paso2",
+                "titulo": "Misión 2: Las Cuevas de Cristal de Crayón",
+                "instrucciones": "Para cruzar el abismo, debes construir un puente de cristal. Arrastra las palabras 'crayons' y 'scissors' a su lugar correcto para formar el puente y recuperar estos tesoros.",
+                "minijuego": {
+                  "tipo": "drag-and-drop",
+                  "items": [
+                      { "id": "drag-crayons", "text": "crayons", "targetZone": "zone-crayons"},
+                      { "id": "drag-scissors", "text": "scissors", "targetZone": "zone-scissors"}
+                  ],
+                  "zonas": [
+                      { "id": "zone-crayons", "prompt": "Arrastra aquí la palabra para los objetos de colores."},
+                      { "id": "zone-scissors", "prompt": "Arrastra aquí la palabra para el objeto que corta."}
+                  ]
+                }
+              },
+              {
+                "id": "paso3",
+                "titulo": "Misión 3: El Volcán de Pegamento Pegajoso",
+                "instrucciones": "En la cima del volcán, el golem de roca custodia el 'glue' y la 'backpack'. Responde correctamente a sus preguntas para que te los entregue y completes tu colección.",
+                 "minijuego": {
+                  "tipo": "quiz",
+                  "preguntas": [
+                    { "pregunta": "¿Qué objeto sirve para pegar cosas?", "opciones": ["Backpack", "Glue", "Pencil"], "respuesta": "Glue", "imagen": "https://images.unsplash.com/photo-1601121242398-38a4e837f44a?q=80&w=1770&auto=format&fit=crop" },
+                    { "pregunta": "¿Dónde guardas todos tus útiles escolares?", "opciones": ["Book", "Scissors", "Backpack"], "respuesta": "Backpack", "imagen": "https://images.unsplash.com/photo-1553062407-98eeb6e0e5c8?q=80&w=1587&auto=format&fit=crop" }
+                  ]
+                }
+              }
+            ]
+          },
+          "recursos": {
+            "titulo": "Pistas Secretas del Capitán Leo",
+            "links": [
+              { "nombre": "La Canción de los Útiles Escolares", "url": "https://www.youtube.com/results?search_query=school+supplies+song", "descripcion": "Un video musical secreto para aprender los nombres en inglés." },
+              { "nombre": "Juego Interactivo de Vocabulario", "url": "https://www.gamestolearnenglish.com/vocabulary-games/", "descripcion": "Un mapa interactivo para practicar los nombres secretos de los objetos." },
+              { "nombre": "Video: What's in my Backpack?", "url": "https://www.youtube.com/results?search_query=what's+in+my+backpack+for+kids", "descripcion": "Un niño explorador te muestra los tesoros que guarda en su mochila." }
+            ]
+          },
+          "evaluacion": {
+            "titulo": "Criterios de Éxito de la Misión",
+            "rubrica": {
+                "titulo": "Evaluación del 'Kit Mágico de la Creación'",
+                "cabeceras": ["Criterio", "Guardián en Entrenamiento (1)", "Guardián Experto (2)", "Leyenda del Mundo (3)"],
+                "filas": [
+                  { "criterio": "Identificación Visual", "insuficiente": "Incluye 3 o menos tesoros.", "suficiente": "Incluye 4-5 tesoros.", "excelente": "Incluye los 6 tesoros de forma clara." },
+                  { "criterio": "Nombres Secretos (Inglés)", "insuficiente": "Etiqueta 1-3 nombres correctamente.", "suficiente": "Etiqueta 4-5 nombres correctamente.", "excelente": "Etiqueta los 6 nombres correctamente." },
+                  { "criterio": "Conjuro de Creación (Oral)", "insuficiente": "Pronuncia 1-3 nombres.", "suficiente": "Pronuncia 4-5 nombres y usa 'I have a...'", "excelente": "Pronuncia los 6 nombres claramente y usa la frase fluidamente." },
+                  { "criterio": "Creatividad y Esfuerzo", "insuficiente": "El póster está incompleto.", "suficiente": "El póster está completo y limpio.", "excelente": "El póster es creativo, colorido y presentado con entusiasmo." }
+                ]
+            },
+            "quizFinal": {
+                "titulo": "Prueba Final de Conocimientos de Guardián",
+                "preguntas": [
+                    {"pregunta": "Elige la imagen que corresponde a 'scissors'", "opciones": ["pencil", "scissors", "glue"], "respuesta": "scissors"},
+                    {"pregunta": "Elige la imagen que corresponde a 'book'", "opciones": ["backpack", "book", "crayons"], "respuesta": "book"},
+                    {"pregunta": "Elige la imagen que corresponde a 'glue'", "opciones": ["glue", "pencil", "backpack"], "respuesta": "glue"}
+                ]
+            }
+          },
+          "conclusion": {
+            "titulo": "¡Héroe del Mundo de los Juguetes!",
+            "reflexion": "¡MISIÓN CUMPLIDA, GUARDIÁN! Gracias a tu valentía, la Mochila Mágica brilla de nuevo y el color ha vuelto a nuestro mundo. El duende Pillo ha aprendido la lección y tu nombre será cantado en nuestras canciones por siempre.",
+            "resumenTitulo": "Tus Tesoros del Conocimiento Adquiridos:",
+            "resumenItems": ["Pencil", "Book", "Crayons", "Scissors", "Glue", "Backpack"],
+            "preguntasTitulo": "Reflexión para Futuros Exploradores:",
+            "preguntasItems": [
+                "Mira dentro de tu propia mochila. ¿Qué 'tesoros' encuentras? ¿Puedes decir sus nombres en inglés?",
+                "¿Por qué crees que saber palabras en otro idioma es útil?",
+                "Si pudieras añadir un séptimo objeto mágico a la Mochila, ¿cuál sería?"
+            ]
+          }
+        };
+
+        /**
+         * =================================================================
+         * MÓDULO: contentLoader.js
+         * Responsable de poblar el HTML con el contenido del objeto JSON.
+         * =================================================================
+         */
+        const contentLoader = {
+            init() {
+                this.loadMainTitle();
+                this.loadIntroduction();
+                this.loadTask();
+                this.loadProcess();
+                this.loadResources();
+                this.loadEvaluation();
+                this.loadConclusion();
+            },
+
+            loadMainTitle() {
+                document.getElementById('main-title').textContent = webQuestContent.tituloGeneral;
+            },
+
+            loadIntroduction() {
+                const intro = webQuestContent.introduccion;
+                document.getElementById('intro-title').textContent = intro.titulo;
+                document.getElementById('intro-narrative').textContent = intro.narrativa;
+                document.getElementById('intro-image').src = intro.imagen;
+                document.getElementById('intro-image').alt = intro.titulo;
+            },
+
+            loadTask() {
+                const task = webQuestContent.tarea;
+                document.getElementById('task-title').textContent = task.titulo;
+                document.getElementById('task-description').textContent = task.descripcion;
+            },
+
+            loadProcess() {
+                const process = webQuestContent.proceso;
+                const accordionContainer = document.getElementById('process-accordion');
+                document.getElementById('process-title').textContent = process.titulo;
+                accordionContainer.innerHTML = '';
+                
+                process.pasos.forEach((paso, index) => {
+                    const isFirst = index === 0;
+                    const accordionItem = `
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading-${paso.id}">
+                                <button class="accordion-button ${!isFirst ? 'collapsed' : ''}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${paso.id}" aria-expanded="${isFirst}" aria-controls="collapse-${paso.id}" ${index > 0 ? 'disabled' : ''}>
+                                    <i class="bi bi-key-fill me-3"></i> ${paso.titulo}
+                                </button>
+                            </h2>
+                            <div id="collapse-${paso.id}" class="accordion-collapse collapse ${isFirst ? 'show' : ''}" aria-labelledby="heading-${paso.id}" data-bs-parent="#process-accordion">
+                                <div class="accordion-body">
+                                    <p>${paso.instrucciones}</p>
+                                    <div class="minigame-container mt-4 p-3 bg-light rounded" id="minigame-${paso.id}">
+                                        </div>
+                                    <div class="text-center mt-3 d-none" id="feedback-${paso.id}">
+                                        <p class="h5 text-success"><i class="bi bi-check-circle-fill"></i> ¡Misión Completada! El siguiente paso está desbloqueado.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    accordionContainer.innerHTML += accordionItem;
+                });
+            },
+
+            loadResources() {
+                const resources = webQuestContent.recursos;
+                const listContainer = document.getElementById('resources-list');
+                document.getElementById('resources-title').textContent = resources.titulo;
+                listContainer.innerHTML = '';
+                resources.links.forEach(link => {
+                    listContainer.innerHTML += `
+                        <a href="${link.url}" target="_blank" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">${link.nombre}</h5>
+                                <small><i class="bi bi-box-arrow-up-right"></i></small>
+                            </div>
+                            <p class="mb-1">${link.descripcion}</p>
+                        </a>`;
+                });
+            },
+            
+            loadEvaluation() {
+                const evalContent = webQuestContent.evaluacion;
+                document.getElementById('evaluation-title').textContent = evalContent.titulo;
+                
+                // Cargar Rúbrica
+                const rubric = evalContent.rubrica;
+                document.getElementById('rubric-title').textContent = rubric.titulo;
+                const rubricHead = document.getElementById('rubric-head');
+                const rubricBody = document.getElementById('rubric-body');
+                rubricHead.innerHTML = `<tr>${rubric.cabeceras.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                rubricBody.innerHTML = rubric.filas.map(fila => `
+                    <tr>
+                        <td><strong>${fila.criterio}</strong></td>
+                        <td>${fila.insuficiente}</td>
+                        <td>${fila.suficiente}</td>
+                        <td>${fila.excelente}</td>
+                    </tr>
+                `).join('');
+
+                // Preparar contenedor para el Quiz Final
+                const quizFinal = evalContent.quizFinal;
+                const container = document.getElementById('final-quiz-container');
+                container.innerHTML = `
+                    <div class="text-center">
+                        <h3 class="mb-4">${quizFinal.titulo}</h3>
+                         <div id="quiz-final-render"></div>
+                         <button id="submit-final-quiz-btn" class="btn btn-primary mt-3">Verificar Respuestas</button>
+                         <div id="final-quiz-results" class="mt-3"></div>
+                    </div>`;
+            },
+            
+            loadConclusion() {
+                const conclusion = webQuestContent.conclusion;
+                document.getElementById('conclusion-title').textContent = conclusion.titulo;
+                document.getElementById('conclusion-reflection').textContent = conclusion.reflexion;
+                
+                const summaryContainer = document.getElementById('conclusion-summary');
+                summaryContainer.innerHTML = `<h5>${conclusion.resumenTitulo}</h5><div class="d-flex flex-wrap justify-content-center gap-2">${conclusion.resumenItems.map(item => `<span class="badge bg-success">${item}</span>`).join('')}</div>`;
+                
+                const questionsContainer = document.getElementById('conclusion-questions');
+                questionsContainer.innerHTML = `<h5>${conclusion.preguntasTitulo}</h5><ul>${conclusion.preguntasItems.map(item => `<li>${item}</li>`).join('')}</ul>`;
+            }
+        };
+
+        /**
+         * =================================================================
+         * MÓDULO: quizManager.js
+         * Responsable de crear y gestionar los minijuegos de cuestionario.
+         * =================================================================
+         */
+        const quizManager = {
+            init(containerId, quizData, onComplete) {
+                const container = document.getElementById(containerId);
+                let quizHTML = '';
+
+                quizData.preguntas.forEach((q, index) => {
+                    const optionsHTML = q.opciones.map(opt => `
+                        <div class="col-md-4">
+                             <div class="card quiz-option text-center p-2" data-question="${index}" data-answer="${opt}">
+                                ${q.imagen ? `<img src="${q.imagen.replace("1770", "400").replace("1587","400")}" class="img-fluid rounded mb-2" alt="${opt}">` : ''}
+                                <p class="mb-0">${opt}</p>
+                             </div>
+                        </div>
+                    `).join('');
+
+                    quizHTML += `
+                        <div class="quiz-question mb-4" id="question-${index}">
+                            <p class="fw-bold">${index + 1}. ${q.pregunta}</p>
+                            <div class="row g-3 justify-content-center">${optionsHTML}</div>
+                        </div>`;
+                });
+
+                container.innerHTML = quizHTML;
+                this.addEventListeners(containerId, quizData, onComplete);
+            },
+            
+            addEventListeners(containerId, quizData, onComplete) {
+                const container = document.getElementById(containerId);
+                const options = container.querySelectorAll('.quiz-option');
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        const selectedOption = e.currentTarget;
+                        const questionIndex = selectedOption.dataset.question;
+                        const selectedAnswer = selectedOption.dataset.answer;
+                        const correctAnswer = quizData.preguntas[questionIndex].respuesta;
+
+                        // Remover seleccion previa
+                        container.querySelectorAll(`[data-question="${questionIndex}"]`).forEach(opt => {
+                            opt.classList.remove('correct', 'incorrect');
+                            opt.style.border = '';
+                        });
+                        
+                        // Marcar respuesta
+                        if(selectedAnswer === correctAnswer) {
+                            selectedOption.classList.add('correct');
+                        } else {
+                            selectedOption.classList.add('incorrect');
+                        }
+                        
+                        this.checkCompletion(containerId, quizData, onComplete);
+                    });
+                });
+            },
+
+            checkCompletion(containerId, quizData, onComplete) {
+                const container = document.getElementById(containerId);
+                const correctAnswers = container.querySelectorAll('.quiz-option.correct').length;
+                if (correctAnswers === quizData.preguntas.length) {
+                    onComplete();
+                }
+            }
+        };
+
+        /**
+         * =================================================================
+         * MÓDULO: dragAndDrop.js
+         * Responsable de crear y gestionar el minijuego de arrastrar y soltar.
+         * =================================================================
+         */
+        const dragAndDropManager = {
+            init(containerId, gameData, onComplete) {
+                const container = document.getElementById(containerId);
+                const itemsHTML = `<div class="d-flex flex-wrap justify-content-center mb-4">${gameData.items.map(item => `<div class="drag-item" draggable="true" id="${item.id}" data-target="${item.targetZone}">${item.text}</div>`).join('')}</div>`;
+                const zonesHTML = `<div class="row g-3">${gameData.zonas.map(zone => `<div class="col-md-6"><p class="small text-muted text-center">${zone.prompt}</p><div class="drop-zone" id="${zone.id}"></div></div>`).join('')}</div>`;
+                container.innerHTML = itemsHTML + zonesHTML;
+                this.addEventListeners(containerId, gameData, onComplete);
+            },
+
+            addEventListeners(containerId, gameData, onComplete) {
+                const container = document.getElementById(containerId);
+                const draggables = container.querySelectorAll('.drag-item');
+                const dropZones = container.querySelectorAll('.drop-zone');
+                
+                draggables.forEach(draggable => {
+                    draggable.addEventListener('dragstart', e => {
+                        e.dataTransfer.setData('text/plain', e.target.id);
+                        setTimeout(() => e.target.style.display = 'none', 0);
+                    });
+                     draggable.addEventListener('dragend', e => {
+                        setTimeout(() => e.target.style.display = 'block', 0);
+                    });
+                });
+
+                dropZones.forEach(zone => {
+                    zone.addEventListener('dragover', e => {
+                        e.preventDefault();
+                        zone.classList.add('over');
+                    });
+                    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+                    zone.addEventListener('drop', e => {
+                        e.preventDefault();
+                        zone.classList.remove('over');
+                        const id = e.dataTransfer.getData('text');
+                        const draggableElement = document.getElementById(id);
+                        
+                        if(zone.id === draggableElement.dataset.target && zone.children.length === 0) {
+                            zone.appendChild(draggableElement);
+                            draggableElement.setAttribute('draggable', 'false');
+                            draggableElement.style.cursor = 'default';
+                            zone.classList.add('correct');
+                            this.checkCompletion(container, gameData, onComplete);
+                        }
+                    });
+                });
+            },
+            checkCompletion(container, gameData, onComplete) {
+                const correctZones = container.querySelectorAll('.drop-zone.correct').length;
+                if(correctZones === gameData.zonas.length) {
+                    onComplete();
+                }
+            }
+        };
+
+
+        /**
+         * =================================================================
+         * MÓDULO: progressTracker.js & navigationManager.js
+         * Gestiona el progreso del usuario y la navegación entre pestañas.
+         * =================================================================
+         */
+        const appManager = {
+            TABS: ['introduccion', 'tarea', 'proceso', 'recursos', 'evaluacion', 'conclusion'],
+            
+            init() {
+                this.loadProgress();
+                this.setupEventListeners();
+                this.initMinigames();
+            },
+            
+            saveProgress(tabId) {
+                const currentProgress = this.TABS.indexOf(tabId);
+                const savedProgress = parseInt(localStorage.getItem('webquestProgress') || '0');
+                if (currentProgress > savedProgress) {
+                    localStorage.setItem('webquestProgress', currentProgress);
+                }
+            },
+            
+            loadProgress() {
+                const progressIndex = parseInt(localStorage.getItem('webquestProgress') || '0');
+                for(let i = 0; i <= progressIndex; i++) {
+                    this.unlockTab(this.TABS[i]);
+                }
+            },
+
+            unlockTab(tabId) {
+                const tabButton = document.getElementById(`${tabId}-tab`);
+                if (tabButton) {
+                    tabButton.classList.remove('disabled');
+                    tabButton.removeAttribute('tabindex');
+                }
+            },
+            
+            navigateToTab(tabId) {
+                const tabButton = document.getElementById(`${tabId}-tab`);
+                if (tabButton && !tabButton.classList.contains('disabled')) {
+                   const tab = new bootstrap.Tab(tabButton);
+                   tab.show();
+                }
+            },
+            
+            setupEventListeners() {
+                // Botones "Continuar"
+                document.querySelectorAll('[data-continue-to]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const nextTabId = button.dataset.continueTo;
+                        this.saveProgress(this.TABS.indexOf(nextTabId));
+                        this.unlockTab(nextTabId);
+                        this.navigateToTab(nextTabId);
+                    });
+                });
+                
+                // Botón reiniciar
+                document.getElementById('restart-btn').addEventListener('click', () => {
+                    localStorage.removeItem('webquestProgress');
+                    localStorage.removeItem('finalQuizScore');
+                    window.location.reload();
+                });
+                
+                // Final Quiz Submit
+                document.getElementById('submit-final-quiz-btn').addEventListener('click', () => {
+                   this.checkFinalQuiz();
+                });
+            },
+
+            initMinigames() {
+                const pasos = webQuestContent.proceso.pasos;
+                pasos.forEach((paso, index) => {
+                    const onComplete = () => {
+                        document.getElementById(`feedback-${paso.id}`).classList.remove('d-none');
+                        // Desbloquear el siguiente acordeón
+                        if (index < pasos.length - 1) {
+                            const nextPasoId = pasos[index + 1].id;
+                            document.querySelector(`#heading-${nextPasoId} button`).removeAttribute('disabled');
+                        } else {
+                            // Todos los pasos completados
+                            document.getElementById('process-continue-btn').removeAttribute('disabled');
+                        }
+                    };
+                    
+                    if (paso.minijuego.tipo === 'quiz') {
+                        quizManager.init(`minigame-${paso.id}`, paso.minijuego, onComplete);
+                    } else if (paso.minijuego.tipo === 'drag-and-drop') {
+                        dragAndDropManager.init(`minigame-${paso.id}`, paso.minijuego, onComplete);
+                    }
+                });
+                
+                // Init final quiz
+                quizManager.init('quiz-final-render', webQuestContent.evaluacion.quizFinal, () => {});
+            },
+            
+            checkFinalQuiz() {
+                const quizContainer = document.getElementById('quiz-final-render');
+                const resultsContainer = document.getElementById('final-quiz-results');
+                const questions = webQuestContent.evaluacion.quizFinal.preguntas;
+                let score = 0;
+
+                questions.forEach((q, index) => {
+                    const selected = quizContainer.querySelector(`.quiz-option.correct[data-question="${index}"]`);
+                    if(selected) {
+                        score++;
+                    }
+                });
+                
+                const total = questions.length;
+                resultsContainer.innerHTML = `<div class="alert alert-info"><h4>Tu Puntuación: ${score} de ${total}</h4></div>`;
+                localStorage.setItem('finalQuizScore', score);
+
+                if (score >= Math.ceil(total * 0.6)) { // Require at least 60% to pass
+                   document.getElementById('evaluation-continue-btn').removeAttribute('disabled');
+                } else {
+                   resultsContainer.innerHTML += `<p class="text-danger">Necesitas una puntuación mayor para completar la misión. ¡Inténtalo de nuevo!</p>`;
+                }
+            }
+        };
+
+
+        /**
+         * =================================================================
+         * PUNTO DE ENTRADA (main.js)
+         * Se ejecuta cuando el DOM está completamente cargado.
+         * =================================================================
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            contentLoader.init();
+            appManager.init();
+        });
+
+    </script>
+</body>
+</html>
