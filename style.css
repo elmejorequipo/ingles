@@ -146,6 +146,14 @@ header p {
 }
 
 /* ESTILOS JUEGO 1 (Pack Backpack) */
+
+.object.selected {
+    transform: scale(1.2) rotate(5deg);
+    border: 5px dashed #ffb74d;
+    border-radius: 20px;
+    background-color: #fff9c4;
+}
+
 #game-1-backpack .game-area {
     display: flex;
     flex-wrap: wrap;
