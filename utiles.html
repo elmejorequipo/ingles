@@ -3,309 +3,779 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My English Classroom Adventure</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>Guardianes del Estuche Mágico - Juego Educativo de Inglés</title>
+    <meta name="description" content="Un divertido juego interactivo para niños de primaria. Aprende los útiles escolares en inglés a través de minijuegos, una narrativa emocionante y desafíos.">
+    <meta name="keywords" content="juego educativo, aprender inglés, útiles escolares, inglés para niños, primaria, juego interactivo, gamificación">
+    <meta name="Luis Andia" content="Gemini">
+
+    <!-- Open Graph Meta Tags para Redes Sociales -->
+    <meta property="og:title" content="Guardianes del Estuche Mágico - Juego Educativo de Inglés" />
+    <meta property="og:description" content="¡Ayuda a Leo el Lápiz Sabio a recuperar los útiles mágicos y aprende inglés de forma divertida!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://placehold.co/1200x630/87CEEB/FFFFFF?text=Guardianes+del+Estuche+M%C3%A1gico" />
+
+
+    <!-- Scripts y Estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Fredoka', sans-serif; background-color: #e0f7fa; color: #004d40; margin: 0; box-sizing: border-box; }
-        #modal-manager { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
-        .modal-window { width: 100%; height: 100%; background-color: rgba(0, 77, 64, 0.7); display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; opacity: 1; transition: opacity 0.5s, visibility 0.5s; }
-        .modal-window.hidden { opacity: 0; visibility: hidden; display: none; }
-        .modal-content { background: white; padding: 30px 40px; border-radius: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); border: 5px solid #ffab91; width: 90%; max-width: 450px; }
-        .modal-content h2 { color: #ff6f61; font-size: 2.8em; margin: 0 0 10px 0; }
-        .modal-content p, .story-text p { font-size: 1.3em; color: #546e7a; margin-bottom: 20px; line-height: 1.6; }
-        #player-name-input { width: 100%; padding: 15px; font-family: 'Fredoka', sans-serif; font-size: 1.2em; border: 2px solid #bcaaa4; border-radius: 12px; box-sizing: border-box; text-align: center; margin-bottom: 20px; }
-        #player-name-input:focus { outline: none; border-color: #ff6f61; }
-        .modal-button { font-family: 'Fredoka', sans-serif; font-size: 1.6em; font-weight: 500; padding: 15px 40px; border: none; background-color: #66bb6a; color: white; border-radius: 15px; cursor: pointer; transition: transform 0.2s, background-color 0.2s; }
-        .modal-button:hover { background-color: #57a05a; transform: scale(1.05); }
-        #game-container { width: 100%; max-width: 900px; background-color: #ffffff; border-radius: 25px; padding: 20px 30px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); text-align: center; border: 5px solid #ffcc80; margin: 20px auto; box-sizing: border-box; }
-        .game-section { padding: 10px; }
-        .game-section.hidden { display: none; }
-        .game-area { margin-top: 20px; padding: 20px; border-radius: 15px; }
-        header h1 { font-size: 2.5em; color: #ff6f61; margin-bottom: 10px; }
-        header p { font-size: 1.2em; color: #546e7a; }
-        .progress-tracker { font-size: 1.3em; font-weight: 500; margin-top: 15px; color: #00796b; background-color: #e8f5e9; padding: 8px 15px; border-radius: 20px; display: inline-block; }
-        #game-1-backpack .game-area { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background-color: #f1f8e9; }
-        #objects-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 150px; flex: 1; padding: 10px; }
-        .object { font-size: 4em; margin: 15px; cursor: grab; transition: transform 0.2s, opacity 0.2s; position: relative; }
-        .object:hover { transform: scale(1.2) rotate(5deg); }
-        .object.dragging { opacity: 0.5; transform: scale(0.9); }
-        #backpack { position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
-        #backpack svg { width: 100%; height: 100%; color: #ff8a65; transition: transform 0.3s; }
-        #backpack.drag-over svg { transform: scale(1.15); color: #66bb6a; }
-        #packed-items-display { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 70%; height: 60%; pointer-events: none; }
-        .packed-item { font-size: 2.2em; margin: 2px; }
-        .object.hidden { display: none; }
-        .command-bar { font-size: 1.8em; font-weight: 600; color: #d84315; margin: 20px 0; padding: 10px; background-color: #fff9c4; border-radius: 15px; border: 3px dashed #ffb74d; }
-        #game-2-find .game-area { display: flex; justify-content: center; align-items: center; padding: 0; background-color: transparent; }
-        #find-scene { position: relative; width: 100%; max-width: 800px; height: 400px; background: url('https://i.pinimg.com/originals/a3/57/3e/a3573e6a0815340a653428fa6930a662.jpg') no-repeat center center; background-size: cover; border-radius: 15px; overflow: hidden; border: 5px solid #a5d6a7; }
-        .findable-object { position: absolute; font-size: 3em; cursor: pointer; transition: transform 0.2s; }
-        .findable-object:hover { transform: scale(1.2); }
-        .found { animation: found-animation 0.5s ease-out; }
-        @keyframes found-animation { 0% { transform: scale(1.2); } 50% { transform: scale(1.5) rotate(15deg); } 100% { transform: scale(1); } }
-        #game-3-commands .game-area { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; background-color: #f1f8e9; }
-        #command-scene { width: 100%; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; }
-        .command-object { font-size: 8em; cursor: pointer; transition: transform 0.3s; margin: 20px; }
-        .command-object:hover { transform: scale(1.1); }
-        .command-object.animated { animation: action-animation 1s ease-in-out; }
-        @keyframes action-animation { 0% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(10deg); } 100% { transform: translateY(0) rotate(0); } }
-        #final-success-message { text-align: center; padding: 20px; }
-        #final-success-message h2 { color: #66bb6a; font-size: 3em; }
-        #final-success-message p { font-size: 1.5em; }
-        #reset-button { font-family: 'Fredoka', sans-serif; font-size: 1.5em; padding: 15px 30px; border: none; background-color: #ff6f61; color: white; border-radius: 15px; cursor: pointer; transition: background-color 0.2s; }
-        #reset-button:hover { background-color: #e55a50; }
-        @media (max-width: 600px) { .modal-content h2 { font-size: 2em; } .modal-content p { font-size: 1.1em; } #game-container { padding: 15px; } #game-1-backpack .game-area, #game-3-commands .game-area { flex-direction: column; } .object { font-size: 3em; } #backpack { width: 120px; height: 120px; } #find-scene { height: 300px; } .findable-object { font-size: 2.5em; } .command-object { font-size: 6em; } }
+        /* Estilos generales del cuerpo del documento */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #87CEEB; /* Color de fondo tipo cielo */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            overflow-x: hidden; /* Previene el desbordamiento horizontal */
+        }
+        /* Estilos para las fuentes principales y botones */
+        h1, h2, h3, .button {
+            font-family: 'Fredoka One', cursive;
+        }
+        /* Clases para controlar la visibilidad de las escenas */
+        .scene {
+            display: none;
+        }
+        .active-scene {
+            display: block;
+        }
+        /* Animaciones y transiciones para tarjetas y respuestas */
+        .item-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .item-card:hover {
+            transform: scale(1.05);
+        }
+        .correct-answer {
+            animation: correct-pulse 0.5s;
+        }
+        .wrong-answer {
+            animation: wrong-shake 0.5s;
+        }
+        @keyframes correct-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px 10px #4ade80; }
+            100% { transform: scale(1); }
+        }
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        /* Estilos para la funcionalidad de arrastrar y soltar */
+        .dragging {
+            opacity: 0.5;
+        }
+        .drop-target-hover {
+            border: 4px dashed #facc15;
+        }
+        .button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+        .sentence-drop-zone {
+            border: 2px dashed #cbd5e1;
+            min-width: 100px;
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            background-color: rgba(255,255,255,0.5);
+        }
+        /* Estilos para las tarjetas de aprendizaje */
+        .learn-card {
+            transition: transform 0.2s;
+        }
+        .learn-card:hover {
+            transform: translateY(-5px);
+        }
+        .learned {
+            border: 3px solid #22c55e;
+            background-color: #dcfce7;
+        }
+        /* Estilos para el área del juego "Desfile" */
+        #parade-game-area {
+            position: relative;
+            height: 300px; /* Altura reducida para móviles */
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        @media (min-width: 768px) {
+            #parade-game-area {
+                height: 400px;
+            }
+        }
+        .parade-item {
+            position: absolute;
+            width: 60px; /* Ítems más pequeños para móviles */
+            height: 60px;
+            cursor: pointer;
+        }
+        @media (min-width: 768px) {
+            .parade-item {
+                width: 80px;
+                height: 80px;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-    <div id="modal-manager">
-        <div id="welcome-modal" class="modal-window">
-            <div class="modal-content">
-                <h2>¡Welcome! 👋</h2>
-                <p>What's your name?</p>
-                <input type="text" id="player-name-input" placeholder="Write your name here" autocomplete="off">
-                <button class="modal-button" data-next="story-1">Continue</button>
+    <!-- Contenedor principal del juego -->
+    <div class="container mx-auto p-2 sm:p-4 max-w-4xl min-h-screen flex flex-col justify-center">
+        
+        <!-- Barra de Progreso -->
+        <div id="progress-container" class="w-full bg-gray-200 rounded-full h-6 md:h-8 mb-4 border-2 md:border-4 border-white shadow-lg hidden">
+            <div id="progress-bar" class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full text-center text-white font-bold flex items-center justify-center transition-all duration-500" style="width: 0%;">
+                <span id="progress-text" class="text-sm md:text-base">0/9</span>
             </div>
         </div>
-        <div id="story-1-modal" class="modal-window hidden">
-            <div class="modal-content">
-                <h2>Bucky's Adventure! 🎒</h2>
-                <div class="story-text"></div>
-                <button class="modal-button" data-next="game-1">Start Mission!</button>
-            </div>
-        </div>
-        <div id="story-2-modal" class="modal-window hidden">
-            <div class="modal-content">
-                <h2>Hide and Seek! 👀</h2>
-                <div class="story-text"></div>
-                <button class="modal-button" data-next="game-2">Let's find them!</button>
-            </div>
-        </div>
-        <div id="story-3-modal" class="modal-window hidden">
-             <div class="modal-content">
-                <h2>Magic Words! ✨</h2>
-                <div class="story-text"></div>
-                <button class="modal-button" data-next="game-3">Let's do magic!</button>
-            </div>
-        </div>
-    </div>
 
-    <div id="game-container" class="hidden">
-        <div id="game-1-backpack" class="game-section">
-            <header>
-                <h1>My English Classroom</h1>
-                <p>¡Hola, <span class="player-name"></span>! Arrastra los útiles a la mochila.</p>
-                <div class="progress-tracker">Objects Packed: 0 / 6</div>
-            </header>
-            <main class="game-area">
-                <div id="objects-container">
-                    <div class="object" draggable="true" id="pencil">✏️</div>
-                    <div class="object" draggable="true" id="book">📖</div>
-                    <div class="object" draggable="true" id="scissors">✂️</div>
-                    <div class="object" draggable="true" id="ruler">📏</div>
-                    <div class="object" draggable="true" id="glue">🧴</div>
-                    <div class="object" draggable="true" id="crayon">🖍️</div>
+        <!-- Contenedor de Escenas (solo una visible a la vez) -->
+        <div id="scene-container" class="flex-grow">
+            <!-- Escena 1: Introducción -->
+            <div id="scene-intro" class="scene active-scene text-center bg-white/80 backdrop-blur-sm p-4 md:p-8 rounded-2xl shadow-2xl border-4 border-white">
+                <h1 class="text-3xl md:text-5xl text-blue-600 mb-4">¡Guardianes del Estuche Mágico!</h1>
+                <div class="flex justify-center my-4 md:my-6">
+                    <svg width="100" height="150" viewBox="0 0 100 150">
+                        <g><rect x="35" y="25" width="30" height="90" fill="#FFD700"/><polygon points="35,115 65,115 50,140" fill="#F4A460"/><polygon points="35,25 65,25 50,10" fill="#FFC0CB"/><path d="M50,135 L50,145" stroke="black" stroke-width="3"/><circle cx="45" cy="50" r="5" fill="black"/><circle cx="55" cy="50" r="5" fill="black"/><path d="M45,65 Q50,75 55,65" stroke="black" stroke-width="2" fill="none"/></g>
+                    </svg>
                 </div>
-                <div id="backpack-container">
-                    <div id="backpack">
-                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.79,6.22A5.44,5.44,0,0,0,15,4H9a5.44,5.44,0,0,0-4.79,2.22L2,11.05V20a2,2,0,0,0,2,2H20a2,2,0,0,0,2-2V11.05ZM12,2.05A5.5,5.5,0,0,1,17.5,7.55V9H6.5V7.55A5.5,5.5,0,0,1,12,2.05ZM10,14a1,1,0,0,1,1-1h2a1,1,0,0,1,0,2H11A1,1,0,0,1,10,14Z"/></svg>
-                        <div id="packed-items-display"></div>
-                    </div>
+                <p class="text-base md:text-xl mb-2">¡Hola, valiente Guardián! Soy Leo, el Lápiz Sabio. ¡Necesito tu ayuda!</p>
+                <p class="text-base md:text-xl mb-6">Un duende travieso ha lanzado un hechizo y ha escondido todos nuestros útiles mágicos por el reino. ¡Sin ellos, el mundo perderá su color y alegría! ¿Te unes a esta aventura para recuperarlos?</p>
+                <button id="start-mission-btn" class="button bg-green-500 hover:bg-green-600 text-white text-xl md:text-2xl py-3 px-8 md:py-4 md:px-10 rounded-full shadow-lg transform hover:scale-105 transition-transform duration-200">
+                    ¡Acepto la Misión!
+                </button>
+            </div>
+
+            <!-- Escena 2: Aprendizaje Interactivo -->
+            <div id="scene-learn" class="scene text-center">
+                <h2 class="text-2xl md:text-4xl text-white mb-2">El Mapa Mágico de Leo</h2>
+                <p class="text-lg md:text-xl text-white/90 mb-6">¡Debemos prepararnos! Toca cada útil para aprender su nombre secreto.</p>
+                <div id="learn-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 bg-white/50 p-4 md:p-6 rounded-2xl"></div>
+            </div>
+
+            <!-- Escena 3: Minijuego 1 (Auditivo) -->
+            <div id="scene-game-1" class="scene text-center">
+                <h2 class="text-2xl md:text-4xl text-white mb-2">El Eco del Bosque Susurrante</h2>
+                <p class="text-lg md:text-xl text-white/90 mb-6">El duende escondió los primeros útiles aquí. ¡Escucha con atención!</p>
+                <button id="play-sound-btn" class="button bg-blue-500 hover:bg-blue-600 text-white text-lg md:text-xl py-3 px-6 rounded-full shadow-lg mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 8.464a5 5 0 000 7.072m2.829-9.9a9 9 0 000 12.728M12 12a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                    Escuchar de nuevo
+                </button>
+                <div id="game-1-options" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            </div>
+            
+            <!-- Escena 4: Minijuego 2 (Arrastrar y Soltar) -->
+            <div id="scene-game-2" class="scene text-center">
+                <h2 class="text-2xl md:text-4xl text-white mb-2">El Puente de las Palabras</h2>
+                <p class="text-lg md:text-xl text-white/90 mb-6">¡Reconstruye el puente con las palabras correctas!</p>
+                <div class="flex flex-col md:flex-row justify-around items-center gap-4">
+                    <div id="game-2-words" class="flex flex-row md:flex-col gap-2 md:gap-4 flex-wrap justify-center"></div>
+                    <div id="game-2-targets" class="flex flex-col gap-4 mt-4 md:mt-0"></div>
                 </div>
-            </main>
+            </div>
+            
+            <!-- Escena 5: Minijuego 3 (Escucha Avanzada) -->
+            <div id="scene-game-3" class="scene text-center">
+                 <h2 class="text-2xl md:text-4xl text-white mb-2">La Cueva del Sonido</h2>
+                 <p id="game-3-instruction" class="text-lg md:text-xl text-white/90 mb-6">¡Elige el sonido que corresponde al útil!</p>
+                 <div id="game-3-image-container" class="flex justify-center mb-4"></div>
+                 <div id="game-3-audio-options" class="flex justify-center gap-2 md:gap-4 flex-wrap"></div>
+            </div>
+
+            <!-- Escena 6: Minijuego 4 (Oraciones) -->
+            <div id="scene-game-4" class="scene text-center">
+                <h2 class="text-2xl md:text-4xl text-white mb-2">El Valle de las Oraciones</h2>
+                <p class="text-lg md:text-xl text-white/90 mb-6">¡Demuestra tu sabiduría y completa las oraciones!</p>
+                <div class="bg-white/80 backdrop-blur-sm p-4 md:p-8 rounded-2xl shadow-lg">
+                    <p id="sentence-container" class="text-xl md:text-3xl text-gray-800 mb-6"></p>
+                    <div id="sentence-word-options" class="flex justify-center gap-2 md:gap-4 flex-wrap"></div>
+                </div>
+            </div>
+            
+            <!-- Escena 7: Minijuego 5 (Desfile) -->
+            <div id="scene-game-5" class="scene text-center">
+                <h2 class="text-2xl md:text-4xl text-white mb-2">El Desfile de Útiles</h2>
+                <p class="text-lg md:text-xl text-white/90 mb-6">¡El duende ha hecho marchar a los útiles! ¡Atrapa el correcto!</p>
+                <div id="parade-game-area"></div>
+                <div class="mt-4 bg-white/80 p-2 md:p-4 rounded-2xl shadow-lg">
+                    <p class="text-xl md:text-2xl text-gray-800">Encuentra el: <span id="parade-target-word" class="font-bold text-purple-600"></span></p>
+                </div>
+            </div>
+
+            <!-- Escena 8: Conclusión -->
+            <div id="scene-conclusion" class="scene text-center bg-white/80 backdrop-blur-sm p-4 md:p-8 rounded-2xl shadow-2xl border-4 border-white">
+                <h1 class="text-3xl md:text-5xl text-yellow-500 mb-4">¡Misión Cumplida, Guardián!</h1>
+                <div class="flex justify-center my-4 md:my-6">
+                    <svg width="150" height="150" viewBox="0 0 150 150">
+                        <circle cx="75" cy="75" r="65" fill="#FFD700" stroke="#B8860B" stroke-width="5"/><polygon points="75,20 85,55 120,55 95,80 105,115 75,95 45,115 55,80 30,55 65,55" fill="#FFA500"/>
+                    </svg>
+                </div>
+                <p class="text-base md:text-xl mb-6">¡Lo lograste! Gracias a ti, el color y la alegría han vuelto a nuestro mundo. ¡Eres un verdadero héroe!</p>
+                <div id="final-items" class="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4 mt-4"></div>
+            </div>
         </div>
-        <div id="game-2-find" class="game-section hidden">
-            <header>
-                <h1>Hide and Seek</h1>
-                <div id="find-command" class="command-bar">Find the...</div>
-            </header>
-            <main class="game-area">
-                <div id="find-scene">
-                    <div class="findable-object" data-name="Crayon">🖍️</div>
-                    <div class="findable-object" data-name="Eraser">🧼</div>
-                    <div class="findable-object" data-name="Glue">🧴</div>
-                    <div class="findable-object" data-name="Apple">🍎</div>
-                </div>
-            </main>
-        </div>
-        <div id="game-3-commands" class="game-section hidden">
-            <header>
-                <h1>Magic Words</h1>
-                <div id="do-command" class="command-bar">Now...</div>
-            </header>
-            <main class="game-area">
-                <div id="command-scene">
-                    <div class="command-object" data-action="open">📖</div>
-                    <div class="command-object" data-action="draw">✏️</div>
-                    <div class="command-object" data-action="glue">🧴</div>
-                </div>
-            </main>
-        </div>
-        <div id="final-success-message" class="hidden">
-            <h2>You are a Superstar, <span class="player-name"></span>! 🌟</h2>
-            <p>You completed all the missions!</p>
-            <button id="reset-button">Play Again From Start</button>
+
+        <!-- Controles de Navegación -->
+        <div id="navigation-controls" class="flex justify-between mt-4 hidden">
+            <button id="back-btn" class="button bg-orange-500 hover:bg-orange-600 text-white text-lg md:text-xl py-2 px-6 md:py-3 md:px-8 rounded-full shadow-lg">Retroceder</button>
+            <button id="forward-btn" class="button bg-green-500 hover:bg-green-600 text-white text-lg md:text-xl py-2 px-6 md:py-3 md:px-8 rounded-full shadow-lg">Avanzar</button>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- GESTIÓN GLOBAL ---
-            let playerName = '';
-            const gameContainer = document.getElementById('game-container');
-            const modalManager = document.getElementById('modal-manager');
+        // --- CONFIGURACIÓN DEL JUEGO ---
 
-            // --- GESTIÓN DE MODALES Y NARRATIVA ---
-            const modals = { 'welcome': document.getElementById('welcome-modal'), 'story-1': document.getElementById('story-1-modal'), 'story-2': document.getElementById('story-2-modal'), 'story-3': document.getElementById('story-3-modal'), };
-            const games = { 'game-1': document.getElementById('game-1-backpack'), 'game-2': document.getElementById('game-2-find'), 'game-3': document.getElementById('game-3-commands'), };
+        // Objeto que contiene todos los datos de los útiles escolares: nombre y código SVG para la imagen.
+        const gameData = {
+            pencil: { name: 'pencil', svg: `<svg viewBox="0 0 50 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="15" y="10" width="20" height="70" fill="#fde047"/><polygon points="15,80 35,80 25,95" fill="#d2b48c"/><polygon points="15,10 35,10 25,0" fill="#fecdd3"/><path d="M25,90 L25,100" stroke="black" stroke-width="2"/></svg>` },
+            book: { name: 'book', svg: `<svg viewBox="0 0 80 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="5" y="5" width="70" height="90" fill="#3b82f6" rx="5"/><rect x="10" y="5" width="5" height="90" fill="#2563eb"/><rect x="20" y="15" width="50" height="10" fill="white" rx="2"/><rect x="20" y="30" width="50" height="10" fill="white" rx="2"/></svg>` },
+            ruler: { name: 'ruler', svg: `<svg viewBox="0 0 100 30" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="5" y="5" width="90" height="20" fill="#F3D1A5" rx="2"/><line x1="10" y1="10" x2="10" y2="20" stroke="black" stroke-width="1"/><line x1="20" y1="10" x2="20" y2="20" stroke="black" stroke-width="1"/><line x1="30" y1="10" x2="30" y2="20" stroke="black" stroke-width="1"/><line x1="40" y1="10" x2="40" y2="20" stroke="black" stroke-width="1"/><line x1="50" y1="10" x2="50" y2="20" stroke="black" stroke-width="1"/><line x1="60" y1="10" x2="60" y2="20" stroke="black" stroke-width="1"/><line x1="70" y1="10" x2="70" y2="20" stroke="black" stroke-width="1"/><line x1="80" y1="10" x2="80" y2="20" stroke="black" stroke-width="1"/><line x1="90" y1="10" x2="90" y2="20" stroke="black" stroke-width="1"/></svg>` },
+            scissors: { name: 'scissors', svg: `<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><g transform="rotate(30 50 50)"><circle cx="30" cy="25" r="15" fill="none" stroke="#ef4444" stroke-width="5"/><circle cx="70" cy="25" r="15" fill="none" stroke="#ef4444" stroke-width="5"/><polygon points="40,35 50,50 20,90" fill="silver"/><polygon points="60,35 50,50 80,90" fill="silver"/></g></svg>` },
+            glue: { name: 'glue', svg: `<svg viewBox="0 0 50 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="10" y="25" width="30" height="70" fill="white" rx="5"/><rect x="5" y="10" width="40" height="20" fill="#f97316" rx="5"/><rect x="18" y="0" width="14" height="10" fill="#fb923c"/></svg>` },
+            pen: { name: 'pen', svg: `<svg viewBox="0 0 50 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="15" y="10" width="20" height="80" fill="#3b82f6"/><polygon points="15,90 35,90 25,100" fill="silver"/><rect x="20" y="15" width="10" height="20" fill="#ffffff" fill-opacity="0.3" rx="5"/></svg>` },
+            crayon: { name: 'crayon', svg: `<svg viewBox="0 0 50 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="15" y="20" width="20" height="80" fill="#16a34a"/><polygon points="15,20 35,20 25,0" fill="#16a34a"/><rect x="10" y="25" width="30" height="10" fill="#14532d"/></svg>` },
+            backpack: { name: 'backpack', svg: `<svg viewBox="0 0 100 100" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="20" y="20" width="60" height="70" fill="#8b5cf6" rx="15"/><rect x="30" y="30" width="40" height="30" fill="#a78bfa" rx="10"/><path d="M40,20 Q20,0 25,5" stroke="#6d28d9" stroke-width="8" fill="none"/><path d="M60,20 Q80,0 75,5" stroke="#6d28d9" stroke-width="8" fill="none"/></svg>` },
+            eraser: { name: 'eraser', svg: `<svg viewBox="0 0 80 50" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"><rect x="5" y="5" width="70" height="40" fill="#FFC0CB" rx="5" stroke="#F08080" stroke-width="2"/></svg>` }
+        };
 
-            modalManager.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal-button')) {
-                    const next = e.target.dataset.next;
-                    handleFlow(next);
-                }
-            });
+        // Datos para el juego de completar oraciones.
+        const sentenceData = [
+            { sentence: "I use a ___ to write.", answer: "pencil" },
+            { sentence: "I read a ___.", answer: "book" },
+            { sentence: "I cut with ___.", answer: "scissors" },
+            { sentence: "I use ___ to stick paper.", answer: "glue" },
+            { sentence: "I color with a ___.", answer: "crayon" },
+            { sentence: "I carry my books in a ___.", answer: "backpack" }
+        ];
+
+        // Define el orden y tipo de cada juego, y los útiles que se deben encontrar en cada uno.
+        const gameOrder = [
+            { type: 'audio', items: ['pencil', 'book', 'ruler'], id: 'game-1' },
+            { type: 'dnd', items: ['scissors', 'glue', 'pen'], id: 'game-2' },
+            { type: 'listening_challenge', items: ['crayon', 'backpack', 'eraser'], id: 'game-3' },
+            { type: 'sentence', items: [], id: 'game-4' },
+            { type: 'parade', items: [], id: 'game-5' }
+        ];
+
+        // Objeto que almacena el estado actual del juego.
+        let gameState = {
+            foundItems: [], // Útiles ya encontrados
+            currentItemToFind: null, // Útil que se busca en la ronda actual
+            itemsInCurrentGame: [], // Útiles restantes en el juego actual
+            sceneOrder: ['intro', 'learn', 'game-1', 'game-2', 'game-3', 'game-4', 'game-5', 'conclusion'], // Orden de las escenas
+            currentSceneIndex: 0, // Índice de la escena actual
+            completedScenes: [], // Escenas que ya han sido completadas
+            currentSentenceIndex: 0, // Índice de la oración actual
+            paradeAnimationId: null, // ID para controlar la animación del desfile
+            paradeItemsToFind: [] // Útiles restantes en el juego del desfile
+        };
+
+        // --- REFERENCIAS A ELEMENTOS DEL DOM ---
+        const scenes = document.querySelectorAll('.scene');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressContainer = document.getElementById('progress-container');
+        const backBtn = document.getElementById('back-btn');
+        const forwardBtn = document.getElementById('forward-btn');
+        const navControls = document.getElementById('navigation-controls');
+
+        // --- LÓGICA DE NAVEGACIÓN Y ESTADO ---
+
+        /**
+         * Muestra una escena específica basada en su índice y oculta las demás.
+         * @param {number} index - El índice de la escena a mostrar.
+         */
+        function showScene(index) {
+            // Detiene la animación del desfile si está activa para evitar que se ejecute en segundo plano.
+            if (gameState.paradeAnimationId) {
+                cancelAnimationFrame(gameState.paradeAnimationId);
+                gameState.paradeAnimationId = null;
+            }
+
+            gameState.currentSceneIndex = index;
+            const sceneId = gameState.sceneOrder[index];
             
-            function handleFlow(step) {
-                Object.values(modals).forEach(m => m.classList.add('hidden'));
-                Object.values(games).forEach(g => g.classList.add('hidden'));
-                
-                if (modals[step]) {
-                    if(step === 'story-1') setupStory1(); 
-                    if(step === 'story-2') setupStory2(); 
-                    if(step === 'story-3') setupStory3();
-                    modals[step].classList.remove('hidden');
-                } else if (games[step]) {
-                    modalManager.classList.add('hidden'); 
-                    gameContainer.classList.remove('hidden'); 
-                    games[step].classList.remove('hidden');
-                    // Iniciar el juego correspondiente
-                    if (step === 'game-2') initGame2();
-                    if (step === 'game-3') initGame3();
-                }
-            }
-
-            function setupStory1() { playerName = document.getElementById('player-name-input').value.trim() || 'Superstar'; document.querySelectorAll('.player-name').forEach(span => span.textContent = playerName); modals['story-1'].querySelector('.story-text').innerHTML = `<p>¡Hola, <strong>${playerName}</strong>! Soy Bucky, tu nueva mochila. ¿Me ayudas a guardar a mis amigos?</p>`; }
-            function setupStory2() { modals['story-2'].querySelector('.story-text').innerHTML = `<p>¡Buen trabajo, <strong>${playerName}</strong>! ¡Ahora vamos a jugar a las escondidas!</p>`; }
-            function setupStory3() { modals['story-3'].querySelector('.story-text').innerHTML = `<p>¡Eres un gran explorador, <strong>${playerName}</strong>! Última misión: ¡las palabras mágicas!</p>`; }
-
-            // --- LÓGICA JUEGO 1: PACK YOUR BACKPACK (BASADO EN EL CÓDIGO QUE SÍ FUNCIONÓ) ---
-            const objectsGame1 = document.querySelectorAll('#game-1-backpack .object');
-            const backpack = document.getElementById('backpack');
-            const packedItemsContainer = document.getElementById('packed-items-display');
-            const progressTracker1 = document.querySelector('#game-1-backpack .progress-tracker');
-            let draggedObject = null;
-            let objectsInBackpack = 0;
-
-            objectsGame1.forEach(object => {
-                object.addEventListener('dragstart', (e) => { 
-                    e.dataTransfer.setData('text/plain', e.currentTarget.id);
-                    e.dataTransfer.effectAllowed = 'move';
-                    draggedObject = e.currentTarget;
-                    setTimeout(() => e.currentTarget.classList.add('dragging'), 0); 
-                });
-                object.addEventListener('dragend', (e) => { 
-                    e.currentTarget.classList.remove('dragging');
-                });
-            });
-
-            backpack.addEventListener('dragover', (e) => { e.preventDefault(); });
-            backpack.addEventListener('dragenter', (e) => { e.preventDefault(); backpack.classList.add('drag-over'); });
-            backpack.addEventListener('dragleave', () => { backpack.classList.remove('drag-over'); });
-            backpack.addEventListener('drop', (e) => {
-                e.preventDefault();
-                backpack.classList.remove('drag-over');
-                if (draggedObject && !draggedObject.classList.contains('packed')) {
-                    packedItemsContainer.innerHTML += `<div class="packed-item">${draggedObject.innerHTML}</div>`;
-                    draggedObject.classList.add('hidden', 'packed');
-                    objectsInBackpack++;
-                    progressTracker1.textContent = `Objects Packed: ${objectsInBackpack} / ${objectsGame1.length}`;
-                    if (objectsInBackpack === objectsGame1.length) {
-                        setTimeout(() => handleFlow('story-2'), 1000);
-                    }
-                }
-            });
-
-            // --- LÓGICA JUEGO 2: FIND THE OBJECT ---
-            let game2Initialized = false;
-            function initGame2() {
-                if(game2Initialized) return;
-                game2Initialized = true;
-                const findableObjects = Array.from(document.querySelectorAll('#game-2-find .findable-object'));
-                const findCommand = document.getElementById('find-command');
-                let objectsToFind = [...findableObjects].sort(() => 0.5 - Math.random());
-                let currentObjectToFind = null;
-                
-                findableObjects.forEach(obj => {
-                    obj.style.top = `${Math.random() * 80 + 10}%`;
-                    obj.style.left = `${Math.random() * 80 + 10}%`;
-                    obj.addEventListener('click', handleFindClick);
-                });
-                
-                function nextObjectToFind() {
-                    if (objectsToFind.length === 0) { setTimeout(() => handleFlow('story-3'), 1000); return; }
-                    currentObjectToFind = objectsToFind.pop();
-                    findCommand.textContent = `Find the ${currentObjectToFind.dataset.name}`;
-                }
-
-                function handleFindClick(e) {
-                    if (e.currentTarget === currentObjectToFind) {
-                        e.currentTarget.classList.add('found');
-                        e.currentTarget.removeEventListener('click', handleFindClick);
-                        setTimeout(nextObjectToFind, 1000);
-                    }
-                }
-                nextObjectToFind();
-            }
-
-            // --- LÓGICA JUEGO 3: LISTEN AND DO ---
-            let game3Initialized = false;
-            function initGame3() {
-                if(game3Initialized) return;
-                game3Initialized = true;
-                const commandObjects = document.querySelectorAll('#game-3-commands .command-object');
-                const doCommand = document.getElementById('do-command');
-                const actions = [
-                    { action: 'open', text: 'Open the book' },
-                    { action: 'draw', text: 'Draw with the pencil' },
-                    { action: 'glue', text: 'Use the glue' }
-                ];
-                let currentAction = 0;
-
-                commandObjects.forEach(obj => {
-                    obj.addEventListener('click', handleCommandClick);
-                });
-
-                function nextCommand() {
-                    if (currentAction >= actions.length) {
-                        setTimeout(() => {
-                            games['game-3'].classList.add('hidden');
-                            document.getElementById('final-success-message').classList.remove('hidden');
-                        }, 1000);
-                        return;
-                    }
-                    doCommand.textContent = actions[currentAction].text;
-                }
-
-                function handleCommandClick(e) {
-                    if (e.currentTarget.dataset.action === actions[currentAction].action) {
-                        e.currentTarget.classList.add('animated');
-                        currentAction++;
-                        setTimeout(() => {
-                            e.currentTarget.classList.remove('animated');
-                            nextCommand();
-                        }, 1500);
-                    }
-                }
-                nextCommand();
-            }
+            scenes.forEach(scene => scene.classList.remove('active-scene'));
+            document.getElementById(`scene-${sceneId}`).classList.add('active-scene');
             
-            // --- LÓGICA DE REINICIO ---
-            document.getElementById('reset-button').addEventListener('click', () => { location.reload(); });
+            setupScene(sceneId); // Configura la escena que se va a mostrar
+            updateButtonStates(); // Actualiza el estado de los botones de navegación
+        }
+
+        /**
+         * Habilita o deshabilita los botones de "Avanzar" y "Retroceder" según el progreso.
+         */
+        function updateButtonStates() {
+            const currentSceneId = gameState.sceneOrder[gameState.currentSceneIndex];
+            backBtn.disabled = gameState.currentSceneIndex === 0;
+            forwardBtn.disabled = !gameState.completedScenes.includes(currentSceneId);
+            if (currentSceneId === 'conclusion') forwardBtn.disabled = true;
+        }
+
+        /**
+         * Prepara una escena para ser mostrada, llamando a la función de configuración correspondiente.
+         * @param {string} sceneId - El ID de la escena a configurar.
+         */
+        function setupScene(sceneId) {
+            const game = gameOrder.find(g => g.id === sceneId);
+            if (game) {
+                gameState.itemsInCurrentGame = [...game.items.filter(item => !gameState.foundItems.includes(item))];
+                if (game.type === 'audio') setupAudioGame();
+                else if (game.type === 'dnd') setupDnDGame();
+                else if (game.type === 'listening_challenge') setupListeningChallengeGame();
+                else if (game.type === 'sentence') setupSentenceGame();
+                else if (game.type === 'parade') setupParadeGame();
+            } else if (sceneId === 'learn') {
+                setupLearnScene();
+            } else if (sceneId === 'conclusion') {
+                setupConclusion();
+            }
+        }
+
+        /**
+         * Actualiza la barra de progreso y el estado del juego cuando se encuentra un útil.
+         */
+        function updateProgress() {
+            gameState.foundItems.push(gameState.currentItemToFind);
+            const totalItems = Object.keys(gameData).length;
+            const progressPercentage = (gameState.foundItems.length / totalItems) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `${gameState.foundItems.length}/${totalItems}`;
+            
+            const index = gameState.itemsInCurrentGame.indexOf(gameState.currentItemToFind);
+            if (index > -1) gameState.itemsInCurrentGame.splice(index, 1);
+
+            // Si se han encontrado todos los útiles de un minijuego, se marca como completado.
+            if (gameState.itemsInCurrentGame.length === 0) {
+                const currentSceneId = gameState.sceneOrder[gameState.currentSceneIndex];
+                if (!gameState.completedScenes.includes(currentSceneId)) {
+                    gameState.completedScenes.push(currentSceneId);
+                }
+                updateButtonStates();
+            } else { // Si no, se prepara la siguiente ronda del mismo minijuego.
+                const currentSceneId = gameState.sceneOrder[gameState.currentSceneIndex];
+                if (currentSceneId === 'game-1') setTimeout(setupAudioGame, 1500);
+                else if (currentSceneId === 'game-3') setTimeout(setupListeningChallengeGame, 1500);
+            }
+        }
+        
+        // --- LÓGICA DE LOS MINIJUEGOS ---
+
+        /**
+         * Utiliza la API de Síntesis de Voz del navegador para pronunciar un texto.
+         * @param {string} text - El texto a pronunciar.
+         * @param {function} callback - Una función a ejecutar cuando termine la pronunciación.
+         */
+        function speak(text, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Cancela cualquier voz anterior
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.onend = callback;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                if (callback) callback(); // Si no es compatible, ejecuta el callback inmediatamente
+            }
+        }
+
+        /**
+         * Configura la escena de aprendizaje interactivo "El Mapa Mágico".
+         */
+        function setupLearnScene() {
+            const learnGrid = document.getElementById('learn-grid');
+            learnGrid.innerHTML = '';
+            const learnedItems = new Set();
+
+            Object.values(gameData).forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'learn-card bg-white/80 p-2 rounded-xl shadow-lg cursor-pointer flex flex-col items-center';
+                card.innerHTML = `<div class="h-16 md:h-24 w-full">${item.svg}</div><h3 class="text-sm md:text-lg mt-2">${item.name}</h3>`;
+                
+                card.addEventListener('click', () => {
+                    speak(item.name, () => {
+                        card.classList.add('learned');
+                        learnedItems.add(item.name);
+
+                        // Cuando se han escuchado todos los útiles, se activa el botón de avanzar.
+                        if (learnedItems.size === Object.keys(gameData).length) {
+                             if (!gameState.completedScenes.includes('learn')) {
+                                gameState.completedScenes.push('learn');
+                            }
+                            updateButtonStates();
+                        }
+                    });
+                });
+                learnGrid.appendChild(card);
+            });
+        }
+
+        /**
+         * Configura el minijuego 1: "El Eco del Bosque Susurrante".
+         */
+        function setupAudioGame() {
+            if (gameState.itemsInCurrentGame.length === 0) return;
+            gameState.currentItemToFind = gameState.itemsInCurrentGame[0];
+            
+            const options = [gameState.currentItemToFind];
+            const allItems = Object.keys(gameData);
+            while (options.length < 3) {
+                const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+                if (!options.includes(randomItem)) options.push(randomItem);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const game1Options = document.getElementById('game-1-options');
+            game1Options.innerHTML = '';
+            options.forEach(itemName => {
+                const card = document.createElement('div');
+                card.className = 'item-card bg-white/90 p-2 md:p-4 rounded-xl shadow-lg cursor-pointer';
+                card.dataset.item = itemName;
+                card.innerHTML = `<div class="h-24 md:h-40 w-full">${gameData[itemName].svg}</div><h3 class="text-xl md:text-2xl mt-2">${itemName}</h3>`;
+                card.addEventListener('click', handleAudioAnswer);
+                game1Options.appendChild(card);
+            });
+            setTimeout(() => speak(gameState.currentItemToFind), 500);
+        }
+
+        /**
+         * Maneja la respuesta del usuario en el minijuego 1.
+         */
+        function handleAudioAnswer(e) {
+            document.querySelectorAll('#game-1-options .item-card').forEach(c => c.style.pointerEvents = 'none');
+            const selectedCard = e.currentTarget;
+            if (selectedCard.dataset.item === gameState.currentItemToFind) {
+                selectedCard.classList.add('correct-answer');
+                speak("Great job!", updateProgress);
+            } else {
+                selectedCard.classList.add('wrong-answer');
+                speak("Try again!", () => {
+                    selectedCard.classList.remove('wrong-answer');
+                    document.querySelectorAll('#game-1-options .item-card').forEach(c => c.style.pointerEvents = 'auto');
+                });
+            }
+        }
+        
+        document.getElementById('play-sound-btn').addEventListener('click', () => speak(gameState.currentItemToFind));
+
+        /**
+         * Configura el minijuego 2: "El Puente de las Palabras".
+         */
+        function setupDnDGame() {
+            if (gameState.itemsInCurrentGame.length === 0) return;
+            const wordsContainer = document.getElementById('game-2-words');
+            const targetsContainer = document.getElementById('game-2-targets');
+            wordsContainer.innerHTML = '';
+            targetsContainer.innerHTML = '';
+            
+            const items = [...gameState.itemsInCurrentGame];
+            items.sort(() => Math.random() - 0.5);
+
+            items.forEach(itemName => {
+                const wordDiv = document.createElement('div');
+                wordDiv.id = `word-dnd-${itemName}`;
+                wordDiv.className = 'button bg-yellow-400 text-white text-lg md:text-2xl py-2 px-4 md:py-3 md:px-8 rounded-lg shadow-md cursor-grab';
+                wordDiv.draggable = true;
+                wordDiv.textContent = itemName;
+                wordDiv.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', itemName));
+                wordsContainer.appendChild(wordDiv);
+
+                const targetDiv = document.createElement('div');
+                targetDiv.className = 'w-32 h-32 md:w-48 md:h-48 bg-white/80 rounded-xl shadow-lg flex items-center justify-center p-2';
+                targetDiv.dataset.item = itemName;
+                targetDiv.innerHTML = gameData[itemName].svg;
+                
+                targetDiv.addEventListener('dragover', e => { e.preventDefault(); e.currentTarget.classList.add('drop-target-hover'); });
+                targetDiv.addEventListener('dragleave', e => e.currentTarget.classList.remove('drop-target-hover'));
+                targetDiv.addEventListener('drop', handleDrop);
+                targetsContainer.appendChild(targetDiv);
+            });
+        }
+
+        /**
+         * Maneja la acción de soltar en el minijuego 2.
+         */
+        function handleDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drop-target-hover');
+            const droppedItemName = e.dataTransfer.getData('text/plain');
+            const targetItemName = e.currentTarget.dataset.item;
+
+            if (droppedItemName === targetItemName) {
+                e.currentTarget.innerHTML = `<div class="text-center"><div class="h-24 md:h-32 w-full">${gameData[targetItemName].svg}</div><h3 class="text-xl md:text-2xl mt-2 text-green-600">${targetItemName}</h3></div>`;
+                const droppedWordElement = document.getElementById(`word-dnd-${droppedItemName}`);
+                if (droppedWordElement) {
+                    droppedWordElement.style.display = 'none';
+                }
+                gameState.currentItemToFind = droppedItemName;
+                speak("Awesome!", updateProgress);
+            } else {
+                speak("Oops, wrong one!");
+            }
+        }
+
+        /**
+         * Configura el minijuego 3: "La Cueva del Sonido".
+         */
+        function setupListeningChallengeGame() {
+            if (gameState.itemsInCurrentGame.length === 0) return;
+            gameState.currentItemToFind = gameState.itemsInCurrentGame[0];
+            const imageContainer = document.getElementById('game-3-image-container');
+            const audioOptionsContainer = document.getElementById('game-3-audio-options');
+            const instruction = document.getElementById('game-3-instruction');
+            
+            imageContainer.innerHTML = `<div class="w-48 h-48 md:w-64 md:h-64 bg-white/90 p-4 rounded-xl shadow-lg">${gameData[gameState.currentItemToFind].svg}</div>`;
+            instruction.textContent = 'Primero, escucha todos los sonidos.';
+
+            const options = [gameState.currentItemToFind];
+            const allItems = Object.keys(gameData);
+            while (options.length < 3) {
+                const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+                if (!options.includes(randomItem)) options.push(randomItem);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            audioOptionsContainer.innerHTML = '';
+            let playedSounds = new Set();
+            options.forEach(itemName => {
+                const button = document.createElement('button');
+                button.className = 'button bg-blue-500 hover:bg-blue-600 text-white text-base md:text-xl py-3 px-4 md:py-4 md:px-6 rounded-full shadow-lg flex items-center';
+                button.dataset.item = itemName;
+                button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-1 md:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.858 8.464a5 5 0 000 7.072m2.829-9.9a9 9 0 000 12.728M12 12a3 3 0 100-6 3 3 0 000 6z"></path></svg> Escuchar`;
+                
+                button.onclick = () => {
+                    speak(itemName, () => {
+                        playedSounds.add(itemName);
+                        if (playedSounds.size === options.length) {
+                            instruction.textContent = '¡Ahora, elige el sonido correcto!';
+                            document.querySelectorAll('#game-3-audio-options button').forEach(btn => {
+                                btn.onclick = handleListeningChallengeAnswer;
+                            });
+                        }
+                    });
+                };
+                audioOptionsContainer.appendChild(button);
+            });
+        }
+
+        /**
+         * Maneja la respuesta en el minijuego 3.
+         */
+        function handleListeningChallengeAnswer(e) {
+            const selectedButton = e.currentTarget;
+            document.querySelectorAll('#game-3-audio-options button').forEach(btn => btn.disabled = true);
+            if (selectedButton.dataset.item === gameState.currentItemToFind) {
+                selectedButton.classList.add('correct-answer');
+                speak("That's right!", updateProgress);
+            } else {
+                selectedButton.classList.add('wrong-answer');
+                speak("Not that one, try again!", () => {
+                    selectedButton.classList.remove('wrong-answer');
+                    document.querySelectorAll('#game-3-audio-options button').forEach(btn => btn.disabled = false);
+                });
+            }
+        }
+
+        /**
+         * Configura el minijuego 4: "El Valle de las Oraciones".
+         */
+        function setupSentenceGame() {
+            if (gameState.currentSentenceIndex >= sentenceData.length) {
+                if (!gameState.completedScenes.includes('game-4')) {
+                    gameState.completedScenes.push('game-4');
+                }
+                updateButtonStates();
+                return;
+            }
+
+            const currentSentence = sentenceData[gameState.currentSentenceIndex];
+            const sentenceContainer = document.getElementById('sentence-container');
+            const wordOptionsContainer = document.getElementById('sentence-word-options');
+
+            const dropZoneHTML = `<span class="sentence-drop-zone" data-answer="${currentSentence.answer}">&nbsp;</span>`;
+            sentenceContainer.innerHTML = currentSentence.sentence.replace('___', dropZoneHTML);
+            
+            const dropZone = sentenceContainer.querySelector('.sentence-drop-zone');
+            dropZone.addEventListener('dragover', e => { e.preventDefault(); e.currentTarget.classList.add('drop-target-hover'); });
+            dropZone.addEventListener('dragleave', e => e.currentTarget.classList.remove('drop-target-hover'));
+            dropZone.addEventListener('drop', handleSentenceDrop);
+
+            const options = [currentSentence.answer];
+            const allItems = Object.keys(gameData);
+            while (options.length < 3) {
+                const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+                if (!options.includes(randomItem)) options.push(randomItem);
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            wordOptionsContainer.innerHTML = '';
+            options.forEach(itemName => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = 'button bg-purple-500 text-white text-base md:text-xl py-2 px-4 md:px-6 rounded-lg shadow-md cursor-grab';
+                wordDiv.draggable = true;
+                wordDiv.textContent = itemName;
+                wordDiv.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', itemName));
+                wordOptionsContainer.appendChild(wordDiv);
+            });
+        }
+
+        /**
+         * Maneja la acción de soltar en el minijuego 4.
+         */
+        function handleSentenceDrop(e) {
+            e.preventDefault();
+            const dropZone = e.currentTarget;
+            dropZone.classList.remove('drop-target-hover');
+            const droppedItemName = e.dataTransfer.getData('text/plain');
+            const correctItemName = dropZone.dataset.answer;
+
+            if (droppedItemName === correctItemName) {
+                dropZone.textContent = correctItemName;
+                dropZone.classList.add('bg-green-200', 'border-green-500');
+                speak("Excellent!", () => {
+                    gameState.currentSentenceIndex++;
+                    setTimeout(setupSentenceGame, 1500);
+                });
+            } else {
+                dropZone.classList.add('bg-red-200');
+                speak("That's not it, try another word.", () => {
+                    setTimeout(() => dropZone.classList.remove('bg-red-200'), 1000);
+                });
+            }
+        }
+
+        /**
+         * Configura el minijuego 5: "El Desfile de Útiles".
+         */
+        function setupParadeGame() {
+            const paradeArea = document.getElementById('parade-game-area');
+            paradeArea.innerHTML = '';
+            gameState.paradeItemsToFind = [...Object.keys(gameData)];
+            
+            function setNextParadeTarget() {
+                if (gameState.paradeItemsToFind.length === 0) {
+                    if (!gameState.completedScenes.includes('game-5')) {
+                        gameState.completedScenes.push('game-5');
+                    }
+                    updateButtonStates();
+                    cancelAnimationFrame(gameState.paradeAnimationId);
+                    gameState.paradeAnimationId = null;
+                    return;
+                }
+                const randomIndex = Math.floor(Math.random() * gameState.paradeItemsToFind.length);
+                gameState.currentItemToFind = gameState.paradeItemsToFind[randomIndex];
+                document.getElementById('parade-target-word').textContent = gameState.currentItemToFind;
+            }
+
+            setNextParadeTarget();
+
+            let lastSpawnTime = 0;
+            function gameLoop(timestamp) {
+                if (!lastSpawnTime) lastSpawnTime = timestamp;
+                const elapsed = timestamp - lastSpawnTime;
+
+                if (elapsed > 1000) { // Genera un nuevo útil cada segundo
+                    lastSpawnTime = timestamp;
+                    const allItems = Object.keys(gameData);
+                    const randomItemName = allItems[Math.floor(Math.random() * allItems.length)];
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'parade-item';
+                    itemElement.dataset.item = randomItemName;
+                    itemElement.innerHTML = gameData[randomItemName].svg;
+                    itemElement.style.left = '-80px';
+                    itemElement.style.top = `${Math.random() * (paradeArea.offsetHeight - 80)}px`;
+                    itemElement.speed = Math.random() * 2 + 1;
+                    itemElement.onclick = handleParadeClick;
+                    paradeArea.appendChild(itemElement);
+                }
+
+                // Mueve los útiles por la pantalla
+                document.querySelectorAll('.parade-item').forEach(item => {
+                    let currentLeft = parseFloat(item.style.left);
+                    item.style.left = `${currentLeft + item.speed}px`;
+                    if (currentLeft > paradeArea.offsetWidth) {
+                        item.remove();
+                    }
+                });
+
+                gameState.paradeAnimationId = requestAnimationFrame(gameLoop);
+            }
+            gameState.paradeAnimationId = requestAnimationFrame(gameLoop);
+
+            function handleParadeClick(e) {
+                const clickedItem = e.currentTarget;
+                if (clickedItem.dataset.item === gameState.currentItemToFind) {
+                    speak("You got it!", () => {
+                        const index = gameState.paradeItemsToFind.indexOf(gameState.currentItemToFind);
+                        if (index > -1) {
+                            gameState.paradeItemsToFind.splice(index, 1);
+                        }
+                        setNextParadeTarget();
+                    });
+                    clickedItem.remove();
+                } else {
+                    speak("Oops!");
+                }
+            }
+        }
+
+        /**
+         * Dispara una animación de confeti.
+         */
+        function triggerConfetti() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        /**
+         * Configura la escena final de conclusión.
+         */
+        function setupConclusion() {
+            const finalItemsContainer = document.getElementById('final-items');
+            finalItemsContainer.innerHTML = '';
+            Object.values(gameData).forEach(item => {
+                finalItemsContainer.innerHTML += `<div class="bg-white/70 p-2 rounded-lg shadow-md"><div class="h-16 md:h-20">${item.svg}</div><p class="font-bold text-center text-sm md:text-base mt-1">${item.name}</p></div>`;
+            });
+            triggerConfetti();
+            speak("Congratulations, you are a true Guardian!");
+        }
+
+        // --- INICIO DEL JUEGO Y NAVEGACIÓN ---
+        document.getElementById('start-mission-btn').addEventListener('click', () => {
+            document.getElementById('start-mission-btn').parentElement.classList.remove('active-scene');
+            navControls.classList.remove('hidden');
+            progressContainer.classList.remove('hidden');
+            gameState.completedScenes.push('intro');
+            showScene(1);
         });
+
+        backBtn.addEventListener('click', () => {
+            if (gameState.currentSceneIndex > 0) showScene(gameState.currentSceneIndex - 1);
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            if (gameState.currentSceneIndex < gameState.sceneOrder.length - 1) showScene(gameState.currentSceneIndex + 1);
+        });
+
     </script>
 </body>
 </html>
