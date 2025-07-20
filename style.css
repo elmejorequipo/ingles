@@ -1,0 +1,141 @@
+/* ... (Todo el CSS anterior es el mismo hasta el final) ... */
+/* Solo se añade una pequeña regla para el texto de la historia */
+
+.modal-content #story-text p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #37474f;
+}
+
+/* (El resto del CSS de la v1.2 no necesita cambios) */
+/* ---- Estilos Generales ---- */
+body {
+    font-family: 'Fredoka', sans-serif;
+    background-color: #e0f7fa;
+    color: #004d40;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos para la Ventana Modal */
+#welcome-modal, #story-modal { /* Aplicamos el mismo estilo a ambas ventanas */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 77, 64, 0.7); /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#welcome-modal.hidden, #story-modal.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border: 5px solid #ffab91; /* Borde coral claro */
+    width: 90%;
+    max-width: 450px;
+}
+
+.modal-content h2 {
+    color: #ff6f61;
+    font-size: 2.8em;
+    margin: 0 0 10px 0;
+}
+
+.modal-content p {
+    font-size: 1.3em;
+    color: #546e7a;
+    margin-bottom: 20px;
+}
+
+#player-name-input {
+    width: 100%;
+    padding: 15px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.2em;
+    border: 2px solid #bcaaa4;
+    border-radius: 12px;
+    box-sizing: border-box;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#player-name-input:focus {
+    outline: none;
+    border-color: #ff6f61;
+}
+
+#start-story-button, #play-game-button { /* Estilo para ambos botones */
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.6em;
+    font-weight: 500;
+    padding: 15px 40px;
+    border: none;
+    background-color: #66bb6a; /* Verde alegre */
+    color: white;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+#start-story-button:hover, #play-game-button:hover {
+    background-color: #57a05a;
+    transform: scale(1.05);
+}
+
+/* ---- Contenedor principal del juego ---- */
+.container {
+    width: 100%;
+    max-width: 800px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    padding: 20px 30px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    border: 5px solid #ffcc80;
+    margin: 20px;
+    opacity: 1; /* Hacemos el juego visible por defecto en el CSS */
+    transition: opacity 0.5s ease-in-out;
+}
+
+.container.hidden { /* Y lo ocultamos con JS al principio */
+    opacity: 0;
+    display: none;
+}
+
+/* ... (el resto del CSS anterior sigue aquí sin cambios) ... */
+#instructions { font-size: 1.2em; color: #546e7a; }
+#progress-tracker { font-size: 1.3em; font-weight: 500; margin-top: 15px; color: #00796b; background-color: #e8f5e9; padding: 8px 15px; border-radius: 20px; display: inline-block; }
+.game-area { display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; margin-top: 20px; padding: 20px; background-color: #f1f8e9; border-radius: 15px; }
+#objects-container, #backpack-container { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 150px; flex: 1; padding: 10px; }
+.object { font-size: 4em; margin: 15px; cursor: grab; transition: transform 0.2s ease-in-out; position: relative; }
+.object:hover { transform: scale(1.2) rotate(5deg); }
+.object.dragging { opacity: 0.5; transform: scale(1.1); }
+.tooltip { visibility: hidden; width: 120px; background-color: #546e7a; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -60px; opacity: 0; transition: opacity 0.3s; }
+.object:hover .tooltip { visibility: visible; opacity: 1; }
+#backpack { font-size: 7em; padding: 20px; border-radius: 50%; transition: all 0.3s; position: relative; width: 150px; height: 150px; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%); }
+#backpack.drag-over { background-color: #a5d6a7; transform: scale(1.1); }
+#packed-items-display { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; width: 80%; height: 80%; }
+.packed-item { font-size: 0.3em; margin: 2px; }
+#success-message { padding: 20px; margin-top: 20px; }
+#success-message h2 { color: #66bb6a; font-size: 3em; }
+#reset-button { font-family: 'Fredoka', sans-serif; font-size: 1.5em; padding: 15px 30px; border: none; background-color: #ff6f61; color: white; border-radius: 15px; cursor: pointer; transition: background-color 0.2s; }
+#reset-button:hover { background-color: #e55a50; }
+.hidden { display: none; }
+@media (max-width: 600px) { .game-area { flex-direction: column; } header h1 { font-size: 2em; } .object { font-size: 3em; } #backpack { font-size: 6em; width: 120px; height: 120px; } }
